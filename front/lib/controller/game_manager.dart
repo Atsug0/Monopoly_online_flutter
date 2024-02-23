@@ -18,7 +18,7 @@ class GameManager {
           biens: [],
           cartes: [],
           prison: false,
-          position: 0),
+          position: 0, reference: ''),
       Joueur(
           id: 1,
           argent: 1500,
@@ -26,7 +26,7 @@ class GameManager {
           biens: [1],
           cartes: [0, 1, 3],
           prison: false,
-          position: 0),
+          position: 0, reference: ''),
       Joueur(
           id: 2,
           argent: 1500,
@@ -34,7 +34,7 @@ class GameManager {
           biens: [3],
           cartes: [0, 1, 3],
           prison: false,
-          position: 2),
+          position: 2, reference: ''),
       Joueur(
           id: 3,
           argent: 1500,
@@ -42,7 +42,7 @@ class GameManager {
           biens: [2],
           cartes: [],
           prison: false,
-          position: 3),
+          position: 3, reference: ''),
     ];
     lstCarte = [
       Carte(

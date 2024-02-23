@@ -2,6 +2,7 @@ import 'dart:convert';
 
 class Joueur {
   int id;
+  String? reference;
   int argent;
   String couleur;
   List<int> biens;
@@ -12,6 +13,7 @@ class Joueur {
   Joueur({
     required this.id,
     required this.argent,
+    required this.reference,
     required this.couleur,
     required this.biens,
     required this.cartes,
@@ -21,6 +23,7 @@ class Joueur {
 
   factory Joueur.fromJson(Map<String, dynamic> json) => Joueur(
         id: json['id'],
+        reference: json['reference'],
         argent: json['argent'],
         couleur: json['couleur'],
         biens: List<int>.from(json['biens']),
@@ -31,6 +34,7 @@ class Joueur {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'reference': reference,
         'argent': argent,
         'biens': biens,
         'cartes': cartes,
