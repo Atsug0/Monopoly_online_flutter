@@ -375,48 +375,58 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
       decoration: BoxDecoration(
         color: GameManager.cardManager.getCardColor(carte),
         border: Border.all(
-            color: carte.nom.isEmpty ? Colors.white : Colors.black, width: 1),
+          color: carte.nom.isEmpty ? Colors.white : Colors.black,
+          width: 1,
+        ),
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: GestureDetector(
-                  onTap: () {
-                    showDialog(
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return InfoCard(
                             carte: carte,
                           );
-                        }).then((value) {});
-                  },
-                  child: Text(
-                    carte.nom,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
+                        },
+                      ).then((value) {});
+                    },
+                    child: AutoSizeText(
+                      carte.nom,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      style: TextStyle(
                         fontFamily: 'Kabel-Bold',
                         fontWeight: FontWeight.w500,
-                        fontSize: 10.0,
-                        color: GameManager.cardManager.getColor(carte.couleur)),
+                        fontSize: 6.0,
+                        color: GameManager.cardManager.getColor(carte.couleur),
+                      ),
+                    ),
                   ),
                 ),
               ),
               if (!GameManager.cardManager.isSpecial(carte))
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: AutoSizeText(
-                    "${carte.prix} \€",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: AutoSizeText(
+                      "${carte.prix} \€",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
                         fontFamily: 'Kabel-Bold',
                         fontWeight: FontWeight.w500,
                         fontSize: 8.0,
-                        color: Colors.black),
-                    maxLines: 2,
+                        color: Colors.black,
+                      ),
+                      maxLines: 2,
+                    ),
                   ),
                 ),
             ],
