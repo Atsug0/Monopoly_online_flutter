@@ -19,7 +19,7 @@
 //Recuperer informations d'une partie
 //Modification des informations d'une partie
 const express = require('express');
-const db = require('./db_config');
+const db = require('./dbconfig');
 
 const router = express.Router();
 
