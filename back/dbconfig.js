@@ -17,6 +17,7 @@ db.connect((err) => {
   
 db.query(`CREATE DATABASE IF NOT EXISTS monop;`);
 db.query(`USE monop;`);
+db.query('DROP TABLE IF EXISTS cartes;');
 db.query(`
 CREATE TABLE IF NOT EXISTS cartes (
     id INTEGER PRIMARY KEY,
@@ -843,32 +844,8 @@ const lstCarte = [
   ];
 
 
-
+lstCarte.forEach(carte => {
     db.query(`
-    CREATE PROCEDURE IF NOT EXISTS insert_into_cartes(
-        IN id INTEGER,
-        IN nom TEXT,
-        IN prix INTEGER,
-        IN couleur TEXT,
-        IN acheteur_id INTEGER ,
-        IN maison INTEGER,
-        IN hotel INTEGER,
-        IN image TEXT,
-        IN chance BOOLEAN,
-        IN communaute BOOLEAN,
-        IN prison BOOLEAN,
-        IN depart BOOLEAN,
-        IN parc INTEGER,
-        IN goprison BOOLEAN,
-        IN prix_hotel INTEGER,
-        IN prix_maison INTEGER
-    )
-    BEGIN
-    DECLARE cartes_count INT;
-    SELECT COUNT(*) INTO cartes_count FROM cartes;
-    IF cartes_count >40 THEN
-        SIGNAL SQLSTATE '4500' SET MESSAGE_TEXT = 'La table n''est pas vide'; 
-    END IF;
         INSERT INTO cartes (
             id ,
             nom,
@@ -887,29 +864,24 @@ const lstCarte = [
             prix_hotel,
             prix_maison
         ) VALUES (
-            id,
-            nom,
-            prix,
-            couleur,
-            acheteur_id,
-            maison,
-            hotel,
-            image,
-            chance,
-            communaute,
-            prison,
-            depart,
-            parc,
-            goprison,
-            prix_hotel,
-            prix_maison
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?
         );
-    END
-    ` );
-    lstCarte.forEach((carte) => {
-        db.query(`
-        CALL insert_into_cartes(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-        `,
+    ` ,
         [
         carte.id,
         carte.nom,
