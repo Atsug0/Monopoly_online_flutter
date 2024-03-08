@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/controller/navigator_key.dart';
 
 class InscriptionPage extends StatefulWidget {
@@ -104,7 +105,11 @@ class _InscriptionPageState extends State<InscriptionPage> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     color: const Color(0xFF1E2851),
-                    border: Border.all(width: 1, color: _textEditingController.text.isEmpty ? Colors.white : Colors.green)),
+                    border: Border.all(
+                        width: 1,
+                        color: _textEditingController.text.isEmpty
+                            ? Colors.white
+                            : Colors.green)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
@@ -407,6 +412,10 @@ class _InscriptionPageState extends State<InscriptionPage> {
                 child: GestureDetector(
                   onTap: () {
                     //faire l essai de connection
+                    JsManager.jsmanager.createUser(
+                        _textEditingController.text,
+                        _textEditingController2.text,
+                        _textEditingController3.text);
                   },
                   child: Container(
                     height: 54,

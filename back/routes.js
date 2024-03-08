@@ -49,7 +49,7 @@ router.post('/authenticateuser',(req,res)=>{
 // get username avec son id
 router.get('/getinfosuserwithid', (req, res) => {
     const id_params = req.query.id;
-    db.query(`SELECT * FROM User WHERE user_id=${id_params}`, (err, results) => {
+    db.query(`SELECT * FROM users WHERE user_id=${id_params}`, (err, results) => {
       if (err) {
         return res.status(500).send("Internal Server Error ! ");
       }

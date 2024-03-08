@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: 'root',
+    user: 'roots',
+    password: 'roots',
     
 });
 
@@ -78,21 +78,21 @@ CREATE PROCEDURE IF NOT EXISTS registerUser(
     password_u VARCHAR(255)
 )
 BEGIN
-    IF EXISTS (SELECT 1 FROM User WHERE email = email_u) THEN
+    IF EXISTS (SELECT 1 FROM users WHERE email = email_u) THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Cette adresse e-mail est déjà utilisée';
-    ELSEIF EXISTS (SELECT 1 FROM User WHERE username = username_u) THEN
+    ELSEIF EXISTS (SELECT 1 FROM users WHERE username = username_u) THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Ce nom d utilisateur est déjà utilisé';
     ELSE
-        INSERT INTO User (
+        INSERT INTO users (
             username,
             email,
             password
         ) VALUES (
-            username_i,
-            adresse_mail_i,
-            mot_de_passe_i
+            username_u,
+            email_u,
+            password_u
         );
     END IF;
 END ;
@@ -109,10 +109,10 @@ CREATE PROCEDURE IF NOT EXISTS authenticateUser(
 )
 BEGIN
     -- Vérification des identifiants
-    IF EXISTS (SELECT 1 FROM User WHERE adresse_mail = input AND mot_de_passe = mot_de_passe1) THEN
+    IF EXISTS (SELECT 1 FROM users WHERE email = input AND password = mot_de_passe1) THEN
         SELECT 'Authentification réussie' AS message;
     ELSE
-        IF EXISTS (SELECT 1 FROM User WHERE username = input AND mot_de_passe = mot_de_passe1) THEN
+        IF EXISTS (SELECT 1 FROM users WHERE username = input AND password = mot_de_passe1) THEN
             SELECT 'Authentification réussie' AS message;
         ELSE
             SIGNAL SQLSTATE '45000'
