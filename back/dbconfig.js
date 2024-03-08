@@ -6,6 +6,7 @@ const db = mysql.createConnection({
     database: 'monop'
 });
 db.query(`CREATE DATABASE IF NOT EXISTS monop;`);
+db.query(`USE monop;`);
 db.query(`
 CREATE TABLE IF NOT EXISTS cartes (
     id INTEGER PRIMARY KEY,
