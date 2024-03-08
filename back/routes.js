@@ -18,6 +18,10 @@
 //Recuperer une carte communaute
 //Recuperer informations d'une partie
 //Modification des informations d'une partie
+const express = require('express');
+const db = require('./db_config');
+
+const router = express.Router();
 
 
 router.post('/registeruser', (req, res) => {
@@ -56,3 +60,5 @@ router.get('/getinfosuserwithid', (req, res) => {
         res.status(200).json({username: user.username });
       });
   });
+
+  module.exports = router;
