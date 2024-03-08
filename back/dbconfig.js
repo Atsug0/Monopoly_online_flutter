@@ -5,6 +5,7 @@ const db = mysql.createConnection({
     password: 'root',
     database: 'monop'
 });
+db.query(`CREATE DATABASE IF NOT EXISTS monop;`);
 db.query(`
 CREATE TABLE IF NOT EXISTS cartes (
     id INTEGER PRIMARY KEY,
@@ -832,7 +833,7 @@ const lstCarte = [
         25),
   ];
 
-  lstCarte.forEach((carte) => {
+lstCarte.forEach((carte) => {
     db.query(`
         INSERT INTO cartes (
             id ,
