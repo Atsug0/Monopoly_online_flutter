@@ -831,8 +831,8 @@ const lstCarte = [
         18,
         25),
   ];
-console.log("BONJOUR",lstCarte[0]);
-lstCarte.forEach((carte) => {
+
+  lstCarte.forEach((carte) => {
     db.query(`
         INSERT INTO cartes (
             id ,
