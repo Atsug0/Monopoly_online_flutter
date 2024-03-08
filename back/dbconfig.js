@@ -3,8 +3,18 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'monop'
+    
 });
+
+// Établir la connexion à la base de données
+db.connect((err) => {
+    if (err) {
+      console.error('Erreur de connexion à la base de données : ' + err.stack);
+      return;
+    }
+    console.log('Connecté à la base de données MySQL');
+  });
+  
 db.query(`CREATE DATABASE IF NOT EXISTS monop;`);
 db.query(`USE monop;`);
 db.query(`
@@ -59,9 +69,9 @@ CREATE TABLE IF NOT EXISTS users(
 `);
 db.query(`
 -- Enregistrez un nouvel utilisateur :
-DELIMITER //
 
-CREATE PROCEDURE registerUser(
+
+CREATE PROCEDURE IF NOT EXISTS registerUser(
     username_u VARCHAR(255),
     email_u VARCHAR(255),
     password_u VARCHAR(255)
@@ -72,7 +82,7 @@ BEGIN
         SET MESSAGE_TEXT = 'Cette adresse e-mail est déjà utilisée';
     ELSEIF EXISTS (SELECT 1 FROM User WHERE username = username_u) THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Ce nom d\'utilisateur est déjà utilisé';
+        SET MESSAGE_TEXT = 'Ce nom d utilisateur est déjà utilisé';
     ELSE
         INSERT INTO User (
             username,
@@ -84,15 +94,15 @@ BEGIN
             mot_de_passe_i
         );
     END IF;
-END //
+END ;
 
-DELIMITER ;
+
 `);
 db.query(`-- Authentifier un utilisateur :
 
-DELIMITER //
 
-CREATE PROCEDURE authenticateUser(
+
+CREATE PROCEDURE IF NOT EXISTS authenticateUser(
     input VARCHAR(255),
     mot_de_passe1 VARCHAR(255)
 )
@@ -108,9 +118,7 @@ BEGIN
             SET MESSAGE_TEXT = 'Identifiants incorrects';
         END IF;
     END IF;
-END //
-
-DELIMITER ;
+END ;
 `);	
 
 class Carte {
@@ -834,8 +842,33 @@ const lstCarte = [
         25),
   ];
 
-lstCarte.forEach((carte) => {
+
+
     db.query(`
+    CREATE PROCEDURE IF NOT EXISTS insert_into_cartes(
+        IN id INTEGER,
+        IN nom TEXT,
+        IN prix INTEGER,
+        IN couleur TEXT,
+        IN acheteur_id INTEGER ,
+        IN maison INTEGER,
+        IN hotel INTEGER,
+        IN image TEXT,
+        IN chance BOOLEAN,
+        IN communaute BOOLEAN,
+        IN prison BOOLEAN,
+        IN depart BOOLEAN,
+        IN parc INTEGER,
+        IN goprison BOOLEAN,
+        IN prix_hotel INTEGER,
+        IN prix_maison INTEGER
+    )
+    BEGIN
+    DECLARE cartes_count INT;
+    SELECT COUNT(*) INTO cartes_count FROM cartes;
+    IF cartes_count >40 THEN
+        SIGNAL SQLSTATE '4500' SET MESSAGE_TEXT = 'La table n''est pas vide'; 
+    END IF;
         INSERT INTO cartes (
             id ,
             nom,
@@ -854,9 +887,30 @@ lstCarte.forEach((carte) => {
             prix_hotel,
             prix_maison
         ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            id,
+            nom,
+            prix,
+            couleur,
+            acheteur_id,
+            maison,
+            hotel,
+            image,
+            chance,
+            communaute,
+            prison,
+            depart,
+            parc,
+            goprison,
+            prix_hotel,
+            prix_maison
         );
-    `, [
+    END
+    ` );
+    lstCarte.forEach((carte) => {
+        db.query(`
+        CALL insert_into_cartes(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `,
+        [
         carte.id,
         carte.nom,
         carte.prix,

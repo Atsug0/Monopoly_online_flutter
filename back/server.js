@@ -9,14 +9,6 @@ app.use(express.json())
 
 app.use(cors())
 
-// Établir la connexion à la base de données
-db.connect((err) => {
-  if (err) {
-    console.error('Erreur de connexion à la base de données : ' + err.stack);
-    return;
-  }
-  console.log('Connecté à la base de données MySQL');
-});
 
 app.use('/api', routes);
 
