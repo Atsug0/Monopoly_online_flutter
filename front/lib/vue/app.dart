@@ -2,7 +2,9 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:monopoly/controller/navigator_key.dart';
+import 'package:monopoly/vue/Connection/connection_page.dart';
 import 'package:monopoly/vue/HomePage/home_page.dart';
+import 'package:monopoly/vue/Inscription/inscription_page.dart';
 import 'package:monopoly/vue/Lobby/connect_lobby.dart';
 import 'package:monopoly/vue/Lobby/create_loby.dart';
 import 'package:monopoly/vue/Plateau/plateau.dart';
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
           "plateau": (context) => const MonopolyBoard(),
           "lobby": (context) => const Lobby(),
           "connectLobby": (context) => const ConnectToLobby(),
+          "inscription": (context) => const InscriptionPage(),
+          "connexion": (context) => const ConnexionPage(),
         },
         debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.system,

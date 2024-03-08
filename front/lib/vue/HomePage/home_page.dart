@@ -119,6 +119,62 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GestureDetector(
+                onTap: () {
+                  navigatorKey.currentState?.pushNamed("inscription");
+                },
+                child: Container(
+                  height: 54,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: const Color(0xFF1E2851),
+                  ),
+                  child: const Center(
+                    child: AutoSizeText(
+                      "Inscription",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Kabel-Bold',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Colors.white),
+                      maxLines: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GestureDetector(
+                onTap: () {
+                  navigatorKey.currentState?.pushNamed("connexion");
+                },
+                child: Container(
+                  height: 54,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: const Color(0xFF1E2851),
+                  ),
+                  child: const Center(
+                    child: AutoSizeText(
+                      "Connexion",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Kabel-Bold',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                          color: Colors.white),
+                      maxLines: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
