@@ -60,6 +60,26 @@ class _InscriptionPageState extends State<InscriptionPage> {
     return regExp.hasMatch(password);
   }
 
+  void _showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Erreur lors de l'inscription"),
+          content: Text("Une erreur s\'est produite lors de l'inscription"),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -410,12 +430,18 @@ class _InscriptionPageState extends State<InscriptionPage> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     //faire l essai de connection
-                    JsManager.jsmanager.createUser(
+                    bool res = await JsManager.jsmanager.createUser(
                         _textEditingController.text,
                         _textEditingController2.text,
                         _textEditingController3.text);
+
+                    if (res) {
+                      navigatorKey.currentState?.pushNamed("connexion");
+                    } else {
+                      _showErrorDialog(context);
+                    }
                   },
                   child: Container(
                     height: 54,

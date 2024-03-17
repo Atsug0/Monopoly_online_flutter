@@ -15,6 +15,26 @@ class _ConnexionPageState extends State<ConnexionPage> {
   TextEditingController _textEditingController3 = TextEditingController();
   bool _isObscured = true;
 
+  void _showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Erreur de connexion'),
+          content: Text('Une erreur s\'est produite lors de la connexion.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,11 +195,16 @@ class _ConnexionPageState extends State<ConnexionPage> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     //faire l essai de connection
-                    JsManager.jsmanager.authenticateUser(
+                    bool res = await JsManager.jsmanager.authenticateUser(
                         _textEditingController2.text,
                         _textEditingController3.text);
+                    if (res) {
+                      Navigator.of(context).pop();
+                    } else {
+                      _showErrorDialog(context);
+                    }
                   },
                   child: Container(
                     height: 54,
