@@ -67,7 +67,7 @@ router.post('/authenticateuser', (req, res) => {
 router.put(`/updatecartes`, (req, res) => {
  
   const {carte_id, acheteur_id,maison,hotel,parc} = req.body;
-  const sqlQuery = `CALL updateCarte(?,?,?,?,?,?,?)`;
+  const sqlQuery = `CALL updatecarte(?,?,?,?,?,?,?)`;
   db.query(sqlQuery,[carte_id, acheteur_id,maison,hotel,parc],(err,results)=>{
     if (err) throw err;
     res.status(200).send("Carte updated !");

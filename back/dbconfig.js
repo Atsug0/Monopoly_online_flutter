@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS users(
 );
 `);
 db.query(` -- Mettre à jour une carte avec id :
-CREATE PROCEDURE IF NOT EXISTS updatecartewithid(
+CREATE PROCEDURE IF NOT EXISTS updatecarte(
     carte_id INTEGER,
     acheteur_id INTEGER,
     maison_new INTEGER,
