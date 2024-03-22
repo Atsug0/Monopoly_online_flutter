@@ -64,6 +64,7 @@ router.post('/authenticateuser', (req, res) => {
     });
   });
 });
+
 router.get('/getjoueurwithid', (req, res) => {
     const sqlQuery = `CALL getJoueur(?)`;
     const id_params = req.query.id;
