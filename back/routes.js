@@ -59,7 +59,6 @@ router.post('/authenticateuser', (req, res) => {
         console.log("Mot de passe incorrect");
         return res.status(401).send("Mot de passe incorrect");
       }
-      console.log("Mot de passe incorrect");
       res.status(200).send("Authentification réussie !");
     });
   });
@@ -75,6 +74,7 @@ router.put(`/updatecartes`, (req, res) => {
  });
 
 router.get(`/getcartes`, (req, res) => {
+    console.log("requete carte");
   db.query(`SELECT * FROM cartes`, (err, results) => {
     if (err) {
       return res.status(500).send("Internal Server Error ! ");
@@ -83,8 +83,13 @@ router.get(`/getcartes`, (req, res) => {
   });
 });
 router.get('/getjoueur', (req, res) => {
+    console.log("requete joueur");
     db.query(`SELECT * FROM joueurs`,(err,results)=>{
-        if (err) throw err;
+        if (err) {
+            console.log(err);
+            throw err
+        };
+        console.log("passé");
         res.status(200).send(results);
     });
 });
@@ -115,7 +120,7 @@ router.put('/updategame', (req, res) => {
 //Creer une nouvelle partie avec l'id de l'utilisateur et le nb de joueurs
 router.post('/creategame', (req, res) => {
     const sqlQuery = `CALL createGame(?,?,?,?,?,?,?,?,?)`;
-    const sqlQuery2 = `CALL createJoueur(?,?,?,?,?,?,?,?)`;
+    const sqlQuery2 = `CALL createJoueur(?,?,?,?,?,?,?)`;
     const { lobby_id, user_id,nb_joueurs,lst_joueurs,state,tour } = req.body;
     const {j1,j2,j3,j4} = lst_joueurs;
     const argent = 1500;

@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/controller/navigator_key.dart';
 
 class Lobby extends StatefulWidget {
@@ -138,7 +139,8 @@ class _LobbyState extends State<Lobby> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    //await JsManager.jsmanager.createGame(0, 0, 4, [0,1,2,3]);
                     navigatorKey.currentState?.pushNamed("plateau");
                   },
                   child: Container(
