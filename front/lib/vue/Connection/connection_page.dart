@@ -201,7 +201,7 @@ class _ConnexionPageState extends State<ConnexionPage> {
                         _textEditingController2.text,
                         _textEditingController3.text);
                     if (res) {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     } else {
                       _showErrorDialog(context);
                     }
