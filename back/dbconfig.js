@@ -232,12 +232,12 @@ BEGIN
 END ;
 `);
 
-db.query(`Procédure updateUser
+db.query(`
 Voici une procédure updateUser qui met à jour les informations d'un joueur dans la base de données :
 
 SQL
 -- Mettre à jour un joueur :
-CREATE PROCEDURE IF NOT EXISTS updateUser(
+CREATE PROCEDURE IF NOT EXISTS updatejoueur(
     user_id INTEGER,
     argent INTEGER,
     couleur TEXT,
