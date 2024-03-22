@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'roots',
-    password: 'roots',
+    user: 'root',
+    password: 'root',
     
 });
 
@@ -18,7 +18,7 @@ db.connect((err) => {
 db.query(`CREATE DATABASE IF NOT EXISTS monop;`);
 db.query(`USE monop;`);
 db.query('DROP TABLE IF EXISTS cartes;');
-db.query(`
+db.query(` -- Créer une table de cartes :
 CREATE TABLE IF NOT EXISTS cartes (
     id INTEGER PRIMARY KEY,
     nom TEXT,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS cartes (
     prix_hotel INTEGER,
     prix_maison INTEGER
 );`);
-db.query(`
+db.query(` -- Créer une table de parties :
 CREATE TABLE IF NOT EXISTS parties (
     id INTEGER PRIMARY KEY,
     user_id INTEGER,
@@ -49,9 +49,10 @@ CREATE TABLE IF NOT EXISTS parties (
     state BOOLEAN,
     tour INTEGER
 );`);
-db.query(`
+db.query(` -- Créer une table de joueurs :
 CREATE TABLE IF NOT EXISTS joueurs (
-    user_id INTEGER FOREIGN KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    user_id INTEGER ,
     argent INTEGER,
     couleur TEXT,
     biens TEXT,
@@ -59,7 +60,7 @@ CREATE TABLE IF NOT EXISTS joueurs (
     prison BOOLEAN,
     position INTEGER
 );`); 
-db.query(`
+db.query(` -- Créer une table d'utilisateurs :
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     token TEXT,
@@ -71,15 +72,25 @@ CREATE TABLE IF NOT EXISTS users(
     argentTotal INTEGER
 );
 `);
-
-db.query(`getjoueurwithid :
-CREATE PROCEDURE IF NOT EXISTS getjoueurwithid(
-    user_id INTEGER
-)
-BEGIN
-    SELECT * FROM joueurs WHERE user_id = user_id;
-END ;
+db.query(` -- Mettre à jour une carte avec id :
+CREATE PROCEDURE IF NOT EXISTS updatecartewithid(
+    carte_id INTEGER,
+    acheteur_id INTEGER,
+    maison_new INTEGER,
+    hotel_new INTEGER,
+    parc_new INTEGER
+  )
+  BEGIN
+    UPDATE cartes
+    SET
+      acheteurId = COALESCE(acheteur_id, acheteurId),  
+      maison = COALESCE(maison_new, maison),           
+      hotel = COALESCE(hotel_new, hotel),              
+      parc = COALESCE(parc_new, parc)                   
+    WHERE id = carte_id;
+END;
 `);
+
 db.query(`-- Getinfosuserwithid :
 CREATE PROCEDURE IF NOT EXISTS getinfosuserwithid(
     id INTEGER
@@ -88,10 +99,7 @@ BEGIN
     SELECT * FROM users WHERE id = id;
 END ;
 `);
-db.query(`
--- Enregistrez un nouvel utilisateur :
-
-
+db.query(`-- Enregistrez un nouvel utilisateur :
 CREATE PROCEDURE IF NOT EXISTS registerUser(
     username_u VARCHAR(255),
     email_u VARCHAR(255),
@@ -141,7 +149,7 @@ BEGIN
     END IF;
 END ;
 `);	
-db.query(`--Créer une nouvelle partie :
+db.query(`-- Créer une nouvelle partie :
 
 CREATE PROCEDURE IF NOT EXISTS createGame(
     id INTEGER,
@@ -178,7 +186,7 @@ BEGIN
     );
 END ;
 `);
-db.query(`--Mettre à jour une partie :
+db.query(`--  Mettre à jour une partie :
 CREATE PROCEDURE IF NOT EXISTS updateGame(
     id INTEGER,
     state BOOLEAN,
@@ -192,7 +200,7 @@ BEGIN
     WHERE id = id;
 END ;
 `);
-db.query(`--Get Partie avec id  :   
+db.query(`-- Get Partie avec id  :   
 CREATE PROCEDURE IF NOT EXISTS getgame(
     id INTEGER
 )
@@ -201,7 +209,7 @@ BEGIN
 END ;
 `);
 
-db.query(`--Initialiser les joueurs :
+db.query(`-- Initialiser les joueurs :
 CREATE PROCEDURE IF NOT EXISTS createPlayer(
     user_id INTEGER,
     argent INTEGER,
@@ -232,11 +240,7 @@ BEGIN
 END ;
 `);
 
-db.query(`
-Voici une procédure updateUser qui met à jour les informations d'un joueur dans la base de données :
-
-SQL
--- Mettre à jour un joueur :
+db.query(`-- Mettre à jour un joueur :
 CREATE PROCEDURE IF NOT EXISTS updatejoueur(
     user_id INTEGER,
     argent INTEGER,

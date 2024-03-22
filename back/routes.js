@@ -64,10 +64,26 @@ router.post('/authenticateuser', (req, res) => {
     });
   });
 });
-router.get('/getjoueurwithid', (req, res) => {
-    const sqlQuery = `CALL getJoueur(?)`;
-    const id_params = req.query.id;
-    db.query(sqlQuery,[id_params],(err,results)=>{
+router.put(`/updatecartes`, (req, res) => {
+ 
+  const {carte_id, acheteur_id,maison,hotel,parc} = req.body;
+  const sqlQuery = `CALL updateCarte(?,?,?,?,?,?,?)`;
+  db.query(sqlQuery,[carte_id, acheteur_id,maison,hotel,parc],(err,results)=>{
+    if (err) throw err;
+    res.status(200).send("Carte updated !");
+  });
+ });
+
+router.get(`/getcartes`, (req, res) => {
+  db.query(`SELECT * FROM cartes`, (err, results) => {
+    if (err) {
+      return res.status(500).send("Internal Server Error ! ");
+    }
+    res.status(200).send(results);
+  });
+});
+router.get('/getjoueur', (req, res) => {
+    db.query(`SELECT * FROM joueurs`,(err,results)=>{
         if (err) throw err;
         res.status(200).send(results);
     });
@@ -132,7 +148,7 @@ router.get('/getinfosuserwithid', (req, res) => {
       if (!user) {
         return res.status(404).send("User not found ! ");
       }
-        res.status(200).json({username: user.username });
+        res.status(200).json(results);
       });
   });
 
