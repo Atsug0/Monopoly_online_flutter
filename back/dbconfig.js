@@ -40,15 +40,18 @@ CREATE TABLE IF NOT EXISTS cartes (
 db.query(`
 CREATE TABLE IF NOT EXISTS parties (
     id INTEGER PRIMARY KEY,
+    user_id INTEGER,
     nombreDeJoueur INTEGER,
-    listeJoueur TEXT,
+    j1 TEXT,
+    j2 TEXT,
+    j3 TEXT,
+    j4 TEXT,
     state BOOLEAN,
     tour INTEGER
 );`);
 db.query(`
 CREATE TABLE IF NOT EXISTS joueurs (
-    id INTEGER PRIMARY KEY,
-    reference TEXT,
+    user_id INTEGER FOREIGN KEY,
     argent INTEGER,
     couleur TEXT,
     biens TEXT,
@@ -67,6 +70,23 @@ CREATE TABLE IF NOT EXISTS users(
     parties INTEGER,
     argentTotal INTEGER
 );
+`);
+
+db.query(`getjoueurwithid :
+CREATE PROCEDURE IF NOT EXISTS getjoueurwithid(
+    user_id INTEGER
+)
+BEGIN
+    SELECT * FROM joueurs WHERE user_id = user_id;
+END ;
+`);
+db.query(`-- Getinfosuserwithid :
+CREATE PROCEDURE IF NOT EXISTS getinfosuserwithid(
+    id INTEGER
+)
+BEGIN
+    SELECT * FROM users WHERE id = id;
+END ;
 `);
 db.query(`
 -- Enregistrez un nouvel utilisateur :
@@ -104,23 +124,139 @@ db.query(`-- Authentifier un utilisateur :
 
 
 CREATE PROCEDURE IF NOT EXISTS authenticateUser(
-    input VARCHAR(255)
+    input VARCHAR(255),
+    mot_de_passe1 VARCHAR(255)
 )
 BEGIN
     -- Vérification des identifiants
-    DECLARE user_hashpass VARCHAR(255);
-    
-    SELECT password INTO user_hashpass
-    FROM users
-    WHERE email = input OR username = input;
-    
-    IF user_hashpass IS NOT NULL THEN
-        SELECT 'User trouvé' AS message, user_hashpass AS password;
+    IF EXISTS (SELECT 1 FROM users WHERE email = input AND password = mot_de_passe1) THEN
+        SELECT 'Authentification réussie' AS message;
     ELSE
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Utilisateur non trouvé';
+        IF EXISTS (SELECT 1 FROM users WHERE username = input AND password = mot_de_passe1) THEN
+            SELECT 'Authentification réussie' AS message;
+        ELSE
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Identifiants incorrects';
+        END IF;
     END IF;
 END ;
 `);	
+db.query(`--Créer une nouvelle partie :
+
+CREATE PROCEDURE IF NOT EXISTS createGame(
+    id INTEGER,
+    user_id INTEGER,
+    nombreDeJoueur INTEGER,
+    j1 INTEGER,
+    j2 INTEGER,
+    j3 INTEGER,
+    j4 INTEGER,
+    tour INTEGER,
+    state BOOLEAN
+)
+BEGIN
+    INSERT INTO parties (
+        id,
+        user_id,
+        nombreDeJoueur,
+        j1,
+        j2,
+        j3,
+        j4,
+        tour,
+        state
+    ) VALUES (
+        id,
+        user_id,
+        nombreDeJoueur,
+        j1,
+        j2,
+        j3,
+        j4,
+        tour,
+        state
+    );
+END ;
+`);
+db.query(`--Mettre à jour une partie :
+CREATE PROCEDURE IF NOT EXISTS updateGame(
+    id INTEGER,
+    state BOOLEAN,
+    tour INTEGER
+)
+BEGIN
+    UPDATE parties
+    SET
+        state = state,
+        tour = tour
+    WHERE id = id;
+END ;
+`);
+db.query(`--Get Partie avec id  :   
+CREATE PROCEDURE IF NOT EXISTS getgame(
+    id INTEGER
+)
+BEGIN
+    SELECT * FROM parties WHERE id = id;
+END ;
+`);
+
+db.query(`--Initialiser les joueurs :
+CREATE PROCEDURE IF NOT EXISTS createPlayer(
+    user_id INTEGER,
+    argent INTEGER,
+    couleur TEXT,
+    biens TEXT,
+    cartes TEXT,
+    prison BOOLEAN,
+    position INTEGER
+)
+BEGIN
+    INSERT INTO joueurs (
+        user_id,
+        argent,
+        couleur,
+        biens,
+        cartes,
+        prison,
+        position
+    ) VALUES (
+        user_id,
+        argent,
+        couleur,
+        biens,
+        cartes,
+        prison,
+        position
+    );
+END ;
+`);
+
+db.query(`Procédure updateUser
+Voici une procédure updateUser qui met à jour les informations d'un joueur dans la base de données :
+
+SQL
+-- Mettre à jour un joueur :
+CREATE PROCEDURE IF NOT EXISTS updateUser(
+    user_id INTEGER,
+    argent INTEGER,
+    couleur TEXT,
+    biens TEXT,
+    cartes TEXT,
+    prison BOOLEAN,
+    position INTEGER
+)
+BEGIN
+    UPDATE joueurs
+    SET
+        argent = argent,
+        couleur = couleur,
+        biens = biens,
+        cartes = cartes,
+        prison = prison,
+        position = position
+    WHERE user_id = user_id;
+END ;`);
 
 class Carte {
     nom; 
