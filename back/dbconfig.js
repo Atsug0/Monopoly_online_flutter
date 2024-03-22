@@ -104,20 +104,20 @@ db.query(`-- Authentifier un utilisateur :
 
 
 CREATE PROCEDURE IF NOT EXISTS authenticateUser(
-    input VARCHAR(255),
-    mot_de_passe1 VARCHAR(255)
+    input VARCHAR(255)
 )
 BEGIN
     -- Vérification des identifiants
-    IF EXISTS (SELECT 1 FROM users WHERE email = input AND password = mot_de_passe1) THEN
-        SELECT 'Authentification réussie' AS message;
+    DECLARE user_hashpass VARCHAR(255);
+    
+    SELECT password INTO user_hashpass
+    FROM users
+    WHERE email = input OR username = input;
+    
+    IF user_hashpass IS NOT NULL THEN
+        SELECT 'User trouvé' AS message, user_hashpass AS password;
     ELSE
-        IF EXISTS (SELECT 1 FROM users WHERE username = input AND password = mot_de_passe1) THEN
-            SELECT 'Authentification réussie' AS message;
-        ELSE
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Identifiants incorrects';
-        END IF;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Utilisateur non trouvé';
     END IF;
 END ;
 `);	
