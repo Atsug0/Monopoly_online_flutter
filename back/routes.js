@@ -14,6 +14,32 @@
 const express = require('express');
 const db = require('./dbconfig');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
+// Options de stratégie JWT
+const options = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: 'jhmnp' // Clé secrète pour la signature
+};
+
+// Stratégie de validation du token
+passport.use(new JwtStrategy(options, (jwtPayload, done) => {
+  // Rechercher l'utilisateur dans la base de données
+  User.findOne({ _id: jwtPayload.id }, (err, user) => {
+    if (err) {
+      return done(err, false);
+    }
+
+    if (!user) {
+      return done(null, false);
+    }
+
+    // Utilisateur trouvé, autoriser l'accès
+    return done(null, user);
+  });
+}));
+
+const auth = passport.authenticate('jwt', { session: false });
 
 const router = express.Router();
 
@@ -59,10 +85,13 @@ router.post('/authenticateuser', (req, res) => {
         console.log("Mot de passe incorrect");
         return res.status(401).send("Mot de passe incorrect");
       }
-      res.status(200).send("Authentification réussie !");
-      const token = jwt.sign({ id: user._id }, 'votre_cle_secrete', { expiresIn: '1h' });
-      // Envoyer le token au client
-      res.json({ token });
+      const secretKey = 'jhmnp';
+      const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '24h' });
+
+      res.status(200).send({
+        message: "Authentification réussie !",
+        token,
+      });
     });
   });
 });
