@@ -95,7 +95,7 @@ router.post('/authenticateuser', (req, res) => {
     });
   });
 });
-router.put(`/updatecartes`, (req, res) => {
+router.put(`/updatecartes`,auth, (req, res) => {
  
   const {carte_id, acheteur_id,maison,hotel,parc} = req.body;
   const sqlQuery = `CALL updatecarte(?,?,?,?,?,?,?)`;
@@ -105,7 +105,7 @@ router.put(`/updatecartes`, (req, res) => {
   });
  });
 
-router.get(`/getcartes`, (req, res) => {
+router.get(`/getcartes`,auth, (req, res) => {
     console.log("requete carte");
   db.query(`SELECT * FROM cartes`, (err, results) => {
     if (err) {
@@ -114,7 +114,7 @@ router.get(`/getcartes`, (req, res) => {
     res.status(200).send(results);
   });
 });
-router.get('/getjoueur', (req, res) => {
+router.get('/getjoueur',auth, (req, res) => {
     console.log("requete joueur");
     db.query(`SELECT * FROM joueurs`,(err,results)=>{
         if (err) {
@@ -125,7 +125,7 @@ router.get('/getjoueur', (req, res) => {
         res.status(200).send(results);
     });
 });
-router.put('/updatejoueur', (req, res) => {
+router.put('/updatejoueur',auth, (req, res) => {
   const sqlQuery = `CALL updateJoueur(?,?,?,?,?,?,?,?)`;
   const {user_id, argent, couleur, lst_biens, lst_cartes, prison, position} = req.body;
   db.query(sqlQuery,[user_id,argent,couleur,lst_biens,lst_cartes,prison,position],(err,results)=>{
@@ -133,7 +133,7 @@ router.put('/updatejoueur', (req, res) => {
       res.status(200).send("Joueur created !");
   });
 });
-router.get('/getgame', (req, res) => {  
+router.get('/getgame',auth, (req, res) => {  
   const sqlQuery = `CALL getgame(?)`;
   const id_params = req.query.id;
   db.query(sqlQuery,[id_params],(err,results)=>{
@@ -141,7 +141,7 @@ router.get('/getgame', (req, res) => {
       res.status(200).send(results);
   });
 });
-router.put('/updategame', (req, res) => {
+router.put('/updategame',auth, (req, res) => {
   const sqlQuery = `CALL updateGame(?,?,?)`;
   const {lobby_id, state, tour} = req.body;
   db.query(sqlQuery,[lobby_id,state, tour],(err,results)=>{
@@ -150,7 +150,7 @@ router.put('/updategame', (req, res) => {
   });
 });
 //Creer une nouvelle partie avec l'id de l'utilisateur et le nb de joueurs
-router.post('/creategame', (req, res) => {
+router.post('/creategame', auth,(req, res) => {
     const sqlQuery = `CALL createGame(?,?,?,?,?,?,?,?,?)`;
     const sqlQuery2 = `CALL createJoueur(?,?,?,?,?,?,?)`;
     const { lobby_id, user_id,nb_joueurs,lst_joueurs,state,tour } = req.body;
@@ -175,7 +175,7 @@ router.post('/creategame', (req, res) => {
   });
  
 // get username avec son id
-router.get('/getinfosuserwithid', (req, res) => {
+router.get('/getinfosuserwithid',auth, (req, res) => {
     const id_params = req.query.id;
     db.query(`SELECT * FROM users WHERE user_id=${id_params}`, (err, results) => {
       if (err) {
