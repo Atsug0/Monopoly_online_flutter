@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
 
@@ -9,7 +10,7 @@ class GameManager {
   late List<Carte> lstCarte;
   late List<Joueur> lstJoueur;
 
-  void init() {
+  void init() async {
     lstJoueur = [
       Joueur(
           id: 0,
@@ -18,7 +19,8 @@ class GameManager {
           biens: [],
           cartes: [],
           prison: false,
-          position: 0, reference: ''),
+          position: 0,
+          reference: ''),
       Joueur(
           id: 1,
           argent: 1500,
@@ -26,7 +28,8 @@ class GameManager {
           biens: [1],
           cartes: [0, 1, 3],
           prison: false,
-          position: 0, reference: ''),
+          position: 0,
+          reference: ''),
       Joueur(
           id: 2,
           argent: 1500,
@@ -34,7 +37,8 @@ class GameManager {
           biens: [3],
           cartes: [0, 1, 3],
           prison: false,
-          position: 2, reference: ''),
+          position: 2,
+          reference: ''),
       Joueur(
           id: 3,
           argent: 1500,
@@ -42,7 +46,8 @@ class GameManager {
           biens: [2],
           cartes: [],
           prison: false,
-          position: 3, reference: ''),
+          position: 3,
+          reference: ''),
     ];
     lstCarte = [
       Carte(
@@ -726,6 +731,10 @@ class GameManager {
           prixHotel: 18,
           prixMaison: 25),
     ];
+    print("joueurs");
+    await JsManager.jsmanager.getjoueurs();
+    print("cartes");
+    await JsManager.jsmanager.getcartes();
   }
 
   void setCard(Carte carte) {}
