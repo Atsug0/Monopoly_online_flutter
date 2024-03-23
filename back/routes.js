@@ -61,6 +61,9 @@ router.post('/authenticateuser', (req, res) => {
       }
       console.log("Mot de passe incorrect");
       res.status(200).send("Authentification réussie !");
+      const token = jwt.sign({ id: user._id }, 'votre_cle_secrete', { expiresIn: '1h' });
+      // Envoyer le token au client
+      res.json({ token });
     });
   });
 });
@@ -115,7 +118,7 @@ router.put('/updategame', (req, res) => {
 //Creer une nouvelle partie avec l'id de l'utilisateur et le nb de joueurs
 router.post('/creategame', (req, res) => {
     const sqlQuery = `CALL createGame(?,?,?,?,?,?,?,?,?)`;
-    const sqlQuery2 = `CALL createJoueur(?,?,?,?,?,?,?,?)`;
+    const sqlQuery2 = `CALL createJoueur(?,?,?,?,?,?,?)`;
     const { lobby_id, user_id,nb_joueurs,lst_joueurs,state,tour } = req.body;
     const {j1,j2,j3,j4} = lst_joueurs;
     const argent = 1500;

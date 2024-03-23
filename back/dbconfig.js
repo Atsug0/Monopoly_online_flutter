@@ -6,6 +6,7 @@ const db = mysql.createConnection({
     
 });
 
+
 // Établir la connexion à la base de données
 db.connect((err) => {
     if (err) {
