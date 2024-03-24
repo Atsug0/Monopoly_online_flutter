@@ -3,11 +3,17 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class JsManager {
   static JsManager jsmanager = JsManager();
+  String token = "";
   bool isConnected = false;
+  late SharedPreferences prefs;
 
+  void init() async {
+    prefs = await SharedPreferences.getInstance();
+  }
   // Fonction pour envoyer la requête POST
   Future<bool> createUser(
       String username, String email, String password) async {
@@ -64,6 +70,8 @@ class JsManager {
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
         print('Réponse du serveur: ${response.body}');
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        prefs.setString('token', jsonResponse["token"]);
         isConnected = true;
         return true;
       } else {
@@ -79,12 +87,14 @@ class JsManager {
 
   Future<bool> getjoueurwithid(int id) async {
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http.get(
           Uri.parse('http://localhost:8000/api/getjoueurwithid?id=$id'),
           headers: {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
-            'Accept': '*/*'
+            'Accept': '*/*',
+            'token': token
           });
 
       // Vérifier le code de réponse
@@ -123,13 +133,15 @@ class JsManager {
 
     // Faire la requête POST
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http.put(
           Uri.parse('http://localhost:8000/api/updatejoueur'),
           body: json.encode(requestBody),
           headers: {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
-            'Accept': '*/*'
+            'Accept': '*/*',
+            'token': token
           });
 
       // Vérifier le code de réponse
@@ -149,11 +161,13 @@ class JsManager {
 
   Future<bool> getgame(int id) async {
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http
           .get(Uri.parse('http://localhost:8000/api/getgame?id=$id'), headers: {
         "Access-Control-Allow-Origin": "*",
         'Content-Type': 'application/json',
-        'Accept': '*/*'
+        'Accept': '*/*',
+        'Authorization': 'Bearer $token'
       });
 
       // Vérifier le code de réponse
@@ -180,13 +194,15 @@ class JsManager {
 
     // Faire la requête POST
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http.put(
           Uri.parse('http://localhost:8000/api/updategame'),
           body: json.encode(requestBody),
           headers: {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
-            'Accept': '*/*'
+            'Accept': '*/*',
+            'Authorization': 'Bearer $token'
           });
 
       // Vérifier le code de réponse
@@ -206,12 +222,14 @@ class JsManager {
 
   Future<bool> getinfosuserwithid(int id) async {
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http.get(
           Uri.parse('http://localhost:8000/api/getinfosuserwithid?id=$id'),
           headers: {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
-            'Accept': '*/*'
+            'Accept': '*/*',
+            'Authorization': 'Bearer $token'
           });
 
       // Vérifier le code de réponse
@@ -246,13 +264,15 @@ class JsManager {
 
     // Faire la requête POST
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http.post(
           Uri.parse('http://localhost:8000/api/creategame'),
           body: json.encode(requestBody),
           headers: {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
-            'Accept': '*/*'
+            'Accept': '*/*',
+            'Authorization': 'Bearer $token'
           });
 
       // Vérifier le code de réponse
@@ -281,13 +301,15 @@ class JsManager {
 
     // Faire la requête POST
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http.put(
           Uri.parse('http://localhost:8000/api/updatecartes'),
           body: json.encode(requestBody),
           headers: {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
-            'Accept': '*/*'
+            'Accept': '*/*',
+            'Authorization': 'Bearer $token'
           });
 
       // Vérifier le code de réponse
@@ -307,11 +329,13 @@ class JsManager {
 
   Future<bool> getcartes() async {
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http
           .get(Uri.parse('http://localhost:8000/api/getcartes'), headers: {
         "Access-Control-Allow-Origin": "*",
         'Content-Type': 'application/json',
-        'Accept': '*/*'
+        'Accept': '*/*',
+        'Authorization': 'Bearer $token'
       });
 
       // Vérifier le code de réponse
@@ -321,6 +345,8 @@ class JsManager {
       } else {
         print(
             'Échec de la requête avec le code de statut: ${response.statusCode}');
+        print(
+            'Échec de la requête avec le code de statut: ${response.body}');
         return false;
       }
     } catch (e) {
@@ -331,11 +357,13 @@ class JsManager {
 
   Future<bool> getjoueurs() async {
     try {
+      String token = prefs.getString('token') ?? "";
       final response = await http
           .get(Uri.parse('http://localhost:8000/api/getjoueur'), headers: {
         "Access-Control-Allow-Origin": "*",
         'Content-Type': 'application/json',
-        'Accept': '*/*'
+        'Accept': '*/*',
+        'Authorization': 'Bearer $token'
       });
 
       // Vérifier le code de réponse

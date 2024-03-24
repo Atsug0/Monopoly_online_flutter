@@ -16,6 +16,7 @@ const db = require('./dbconfig');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 // Options de stratégie JWT
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
