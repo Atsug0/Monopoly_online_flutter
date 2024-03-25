@@ -8,6 +8,7 @@ import 'package:monopoly/vue/Inscription/inscription_page.dart';
 import 'package:monopoly/vue/Lobby/connect_lobby.dart';
 import 'package:monopoly/vue/Lobby/create_loby.dart';
 import 'package:monopoly/vue/Plateau/plateau.dart';
+import 'package:monopoly/vue/Plateau/plateau_wait.dart';
 
 
 
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         initialRoute: "/",
         routes: {
           "/": (context) => const HomePage(),
-          "plateau": (context) => const MonopolyBoard(),
+          "plateau": (context) => const MonopolyBoardAsync(),
           "lobby": (context) => const Lobby(),
           "connectLobby": (context) => const ConnectToLobby(),
           "inscription": (context) => const InscriptionPage(),

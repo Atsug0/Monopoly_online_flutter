@@ -27,7 +27,6 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   @override
   void initState() {
     List<int> lid = [0, 1, 2, 3];
-    GameManager.cardManager.init();
     de = false;
     LobbyManager.lobbyManager.getIdPlayers();
     bottomid = LobbyManager.lobbyManager.idPlayer;
@@ -37,6 +36,7 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
     topid = lid.removeAt(0);
     super.initState();
   }
+
 
   //si c'est ton tour
   // lancez les dés

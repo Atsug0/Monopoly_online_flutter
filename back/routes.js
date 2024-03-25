@@ -21,7 +21,7 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const Sequelize = require('sequelize'); // Installation requise
 
 // Configuration de la connexion à MariaDB
-const sequelize = new Sequelize('monop', 'root', 'root', {
+const sequelize = new Sequelize('monop', 'roots', 'roots', {
   host: 'localhost',
   dialect: 'mysql',
  
@@ -145,6 +145,7 @@ router.get('/getjoueur',auth, (req, res) => {
             throw err
         };
         console.log("passé");
+        console.log(results);
         res.status(200).send(results);
     });
 });

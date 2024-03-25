@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:monopoly/controller/game_manager.dart';
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,7 @@ class JsManager {
   void init() async {
     prefs = await SharedPreferences.getInstance();
   }
+
   // Fonction pour envoyer la requête POST
   Future<bool> createUser(
       String username, String email, String password) async {
@@ -340,17 +342,16 @@ class JsManager {
 
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
-        print('Réponse du serveur: ${response.body}');
+        GameManager.cardManager.lstCarte = Carte.parseCartes(response.body);
         return true;
       } else {
         print(
             'Échec de la requête avec le code de statut: ${response.statusCode}');
-        print(
-            'Échec de la requête avec le code de statut: ${response.body}');
+        print('Échec de la requête avec le code de statut: ${response.body}');
         return false;
       }
     } catch (e) {
-      print('Erreur lors de la requête: $e');
+      print('Erreur lors de la requête getCartes: $e');
       return false;
     }
   }
@@ -368,7 +369,7 @@ class JsManager {
 
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
-        print('Réponse du serveur: ${response.body}');
+        GameManager.cardManager.lstJoueur = Joueur.parseJoueurs(response.body);
         return true;
       } else {
         print(
@@ -376,7 +377,7 @@ class JsManager {
         return false;
       }
     } catch (e) {
-      print('Erreur lors de la requête: $e');
+      print('Erreur lors de la requête getJoueur: $e');
       return false;
     }
   }

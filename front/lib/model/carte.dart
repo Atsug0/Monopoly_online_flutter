@@ -38,44 +38,50 @@ class Carte {
   });
 
   factory Carte.fromJson(Map<String, dynamic> json) => Carte(
-      nom: json['nom'],
-      prix: json['prix'],
-      couleur: json['couleur'],
-      position: json['position'],
-      acheteurId: json['acheteurId'],
-      maison: json['maison'],
-      hotel: json['hotel'],
-      image: json['image'],
-      chance: json['chance'],
-      communaute: json['communaute'],
-      prison: json['prison'],
-      goprison: json['goprison'],
-      parc: json['parc'],
-      prixHotel: json['prixHotel'],
-      prixMaison: json['prixMaison'],
-      depart: json['depart']);
+        nom: json['nom'],
+        prix: json['prix'],
+        couleur: json['couleur'],
+        acheteurId: json['acheteur_id'],
+        maison: json['maison'],
+        hotel: json['hotel'],
+        image: json['image'],
+        chance: json['chance'] == 0 ? false : true,
+        communaute: json['communaute'] == 0 ? false : true,
+        prison: json['prison'] == 0 ? false : true,
+        depart: json['depart'] == 0 ? false : true,
+        parc: json['parc'],
+        goprison: json['goprison'] == 0 ? false : true,
+        prixHotel: json['prix_hotel'],
+        prixMaison: json['prix_maison'],
+        position: json['id'],
+      );
 
   Map<String, dynamic> toJson() => {
+        'id': position,
         'nom': nom,
         'prix': prix,
         'couleur': couleur,
-        'position': position,
-        'acheteurId': acheteurId,
+        'acheteur_id': acheteurId,
         'maison': maison,
         'hotel': hotel,
         'image': image,
-        'chance': chance,
-        'communaute': communaute,
-        'prison': prison,
-        'goprison': goprison,
+        'chance': chance ? 1 : 0,
+        'communaute': communaute ? 1 : 0,
+        'prison': prison ? 1 : 0,
+        'depart': depart ? 1 : 0,
         'parc': parc,
-        'depart': depart,
-        'prixHotel': prixHotel,
-        'prixMaison': prixMaison,
+        'goprison': goprison ? 1 : 0,
+        'prix_hotel': prixHotel,
+        'prix_maison': prixMaison,
       };
 
   String toJsonString() => json.encode(toJson());
 
   factory Carte.fromJsonString(String jsonString) =>
       Carte.fromJson(json.decode(jsonString));
+
+  static List<Carte> parseCartes(String jsonStr) {
+    final parsed = json.decode(jsonStr).cast<Map<String, dynamic>>();
+    return parsed.map<Carte>((json) => Carte.fromJson(json)).toList();
+  }
 }
