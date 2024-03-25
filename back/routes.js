@@ -16,6 +16,28 @@ const db = require('./dbconfig');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const { ExtractJwt } = require('passport-jwt');
+const JwtStrategy = require('passport-jwt').Strategy;
+const Sequelize = require('sequelize'); // Installation requise
+
+// Configuration de la connexion à MariaDB
+const sequelize = new Sequelize('monop', 'root', 'root', {
+  host: 'localhost',
+  dialect: 'mysql',
+ 
+});
+const User = sequelize.define('users', {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  username: Sequelize.STRING,
+  email: Sequelize.STRING,
+  password: Sequelize.STRING
+},{
+  timestamps: false // Exclude timestamps for this model
+});
 // Options de stratégie JWT
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -24,19 +46,15 @@ const options = {
 
 // Stratégie de validation du token
 passport.use(new JwtStrategy(options, (jwtPayload, done) => {
-  // Rechercher l'utilisateur dans la base de données
-  User.findOne({ _id: jwtPayload.id }, (err, user) => {
-    if (err) {
-      return done(err, false);
-    }
-
-    if (!user) {
-      return done(null, false);
-    }
-
-    // Utilisateur trouvé, autoriser l'accès
-    return done(null, user);
-  });
+  User.findByPk(jwtPayload.id) // Rechercher par ID primaire
+    .then(user => {
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
+    })
+    .catch(err => done(err, false));
 }));
 
 const auth = passport.authenticate('jwt', { session: false });
@@ -57,6 +75,9 @@ router.post('/registeruser', (req, res) => {
         return res.status(500).send("Erreur lors de la création de l'utilisateur");
       }
       res.status(200).send("Utilisateur créé !");
+      
+      
+      
     });
   });
 });
@@ -75,6 +96,8 @@ router.post('/authenticateuser', (req, res) => {
       return res.status(404).send("Utilisateur non trouvé");
     }
     const user = results[0];
+    console.log(user[0]);
+    console.log(user[0].password);
     // Vérifier le mot de passe
     bcrypt.compare(password, user[0].password, (err, result) => {
       if (err) {
@@ -86,8 +109,8 @@ router.post('/authenticateuser', (req, res) => {
         return res.status(401).send("Mot de passe incorrect");
       }
       const secretKey = 'jhmnp';
-      const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '24h' });
-
+      const token = jwt.sign({ id: user[0].id }, secretKey, { expiresIn: '24h' });
+    
       res.status(200).send({
         message: "Authentification réussie !",
         token,

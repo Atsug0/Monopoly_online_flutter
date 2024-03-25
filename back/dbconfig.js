@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'roots',
-    password: 'roots',
+    user: 'root',
+    password: 'root',
     
 });
 
@@ -133,21 +133,21 @@ db.query(`-- Authentifier un utilisateur :
 
 
 CREATE PROCEDURE IF NOT EXISTS authenticateUser(
-    input VARCHAR(255)
-)
-BEGIN
-    -- Vérification des identifiants    
+    IN input VARCHAR(255)
+  )
+  BEGIN
+    -- Verification of credentials
     DECLARE user_hashpass VARCHAR(255);
-
-    SELECT password INTO user_hashpass
+    DECLARE user_id INTEGER;
+    SELECT password, id INTO user_hashpass, user_id  
     FROM users
     WHERE email = input OR username = input;
     IF user_hashpass IS NOT NULL THEN
-        SELECT 'User trouvé' AS message, user_hashpass AS password;
+      SELECT user_id AS id, 'User trouvé' AS message, user_hashpass AS password;  
     ELSE
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Utilisateur non trouvé';
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Utilisateur non trouvé';
     END IF;
-END ;
+  END ;
 `);	
 db.query(`-- Créer une nouvelle partie :
 
