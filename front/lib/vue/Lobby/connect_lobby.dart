@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:monopoly/controller/navigator_key.dart';
+import 'package:monopoly/controller/socket.controller.dart';
 
 class ConnectToLobby extends StatefulWidget {
   const ConnectToLobby({super.key});
@@ -25,7 +29,7 @@ class _ConnectToLobbyState extends State<ConnectToLobby> {
                 children: [
                   IconButton(
                     onPressed: () {
-                       Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     },
                     icon: const Icon(
                       Icons.arrow_back,
@@ -63,7 +67,6 @@ class _ConnectToLobbyState extends State<ConnectToLobby> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
                         controller: _textEditingController,
-                        maxLength: 6,
 
                         decoration: const InputDecoration(
                           hintText: 'Entrez votre code',
@@ -106,6 +109,14 @@ class _ConnectToLobbyState extends State<ConnectToLobby> {
               child: GestureDetector(
                 onTap: () {
                   //faire l essai de connection
+                  SocketManager.socketmanager
+                      .joinGame(_textEditingController.text);
+                  Timer(Duration(seconds: 2), () {
+                    // Vérifier si x est différent de 3
+                    if (SocketManager.socketmanager.idgame != null) {
+                      navigatorKey.currentState!.pushNamed("lobby");
+                    }
+                  });
                 },
                 child: Container(
                   height: 54,

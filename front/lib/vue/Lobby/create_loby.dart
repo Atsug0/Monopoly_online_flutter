@@ -1,24 +1,35 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:monopoly/controller/js_controller.dart';
+import 'package:monopoly/controller/socket.controller.dart';
 import 'package:monopoly/controller/navigator_key.dart';
 
 class Lobby extends StatefulWidget {
-  const Lobby({super.key});
+  const Lobby({Key? key}) : super(key: key);
 
   @override
   State<Lobby> createState() => _LobbyState();
 }
 
 class _LobbyState extends State<Lobby> {
-  late int _nbrConnection;
-  late int _nbrBot;
+  int _nbrConnection = 1;
+  int _nbrBot = 0;
 
   @override
   void initState() {
-    _nbrConnection = 1;
-    _nbrBot = 0;
     super.initState();
+    SocketManager.socketmanager.onSocketUpdateLobby = _onSocketUpdate;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _onSocketUpdate() {
+    print("update");
+    setState(
+        () {}); // Mettre à jour l'état de la page lorsque les données du socket changent
   }
 
   @override
@@ -34,7 +45,7 @@ class _LobbyState extends State<Lobby> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      //envoyer la demande de fin de lobby
+                      // Envoyer la demande de fin de lobby
                       Navigator.of(context).pop();
                     },
                     icon: const Icon(
@@ -48,7 +59,7 @@ class _LobbyState extends State<Lobby> {
             ),
             Spacer(),
             AutoSizeText(
-              "Il y a $_nbrConnection Joueur(s)",
+              "Il y a ${SocketManager.socketmanager.players.length} Joueur(s)",
               textAlign: TextAlign.center,
               style: const TextStyle(
                   fontFamily: 'Kabel-Bold',
@@ -58,7 +69,7 @@ class _LobbyState extends State<Lobby> {
               maxLines: 2,
             ),
             AutoSizeText(
-              "Le code de la salle est ....",
+              "Le code de la salle est ${SocketManager.socketmanager.idgame ?? '...'}",
               textAlign: TextAlign.center,
               style: const TextStyle(
                   fontFamily: 'Kabel-Bold',
@@ -71,7 +82,7 @@ class _LobbyState extends State<Lobby> {
               padding: const EdgeInsets.all(16.0),
               child: GestureDetector(
                 onTap: () {
-                  //gérer les bots
+                  // Gérer les bots
                   if (_nbrConnection < 4) {
                     setState(() {
                       _nbrConnection += 1;
@@ -106,7 +117,7 @@ class _LobbyState extends State<Lobby> {
               child: GestureDetector(
                 onTap: () {
                   if (_nbrConnection >= 2 && _nbrBot > 0) {
-                    //gérer les bots
+                    // Gérer les bots
                     setState(() {
                       _nbrConnection -= 1;
                       _nbrBot -= 1;
@@ -135,41 +146,63 @@ class _LobbyState extends State<Lobby> {
                 ),
               ),
             ),
-            _nbrConnection == 4 ?
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: GestureDetector(
-                  onTap: () async {
-                    //await JsManager.jsmanager.createGame(0, 0, 4, [0,1,2,3]);
-                    navigatorKey.currentState?.pushNamed("plateau");
-                  },
-                  child: Container(
-                    height: 54,
-                    width: 200,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: const Color(0xFF1E2851),
-                        border: Border.all(width: 1, color: Colors.white)),
-                    child: const Center(
-                      child: AutoSizeText(
-                        "Lancer la partie",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontFamily: 'Kabel-Bold',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18.0,
-                            color: Colors.white),
-                        maxLines: 2,
+            _nbrConnection == 4
+                ? Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        //await JsManager.jsmanager.createGame(0, 0, 4, [0,1,2,3]);
+                        if (SocketManager.socketmanager.players.isNotEmpty) {
+                          int id = int.parse(
+                              JsManager.jsmanager.prefs.getString('id') ??
+                                  "-1");
+                          if (id != -1 &&
+                              id == SocketManager.socketmanager.players.first) {
+                            navigatorKey.currentState?.pushNamed("plateau");
+                            int sum = 0;
+                            String idgame =
+                                SocketManager.socketmanager.idgame ?? "";
+                            for (int i = 0; i < idgame.length; i++) {
+                              sum += idgame.codeUnitAt(i);
+                            }
+                            await JsManager.jsmanager.createGame(
+                                sum,
+                                SocketManager.socketmanager.players.first,
+                                SocketManager.socketmanager.players.length,
+                                SocketManager.socketmanager.players);
+                            SocketManager.socketmanager.startGame(idgame);
+                          }
+                        }
+                      },
+                      child: Container(
+                        height: 54,
+                        width: 200,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: const Color(0xFF1E2851),
+                            border: Border.all(width: 1, color: Colors.white)),
+                        child: const Center(
+                          child: AutoSizeText(
+                            "Lancer la partie",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontFamily: 'Kabel-Bold',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                                color: Colors.white),
+                            maxLines: 2,
+                          ),
+                        ),
                       ),
                     ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      height: 54,
+                      width: 200,
+                    ),
                   ),
-                ),
-              ) : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                    height: 54,
-                    width: 200,),
-              ),
             Spacer(),
           ],
         ),

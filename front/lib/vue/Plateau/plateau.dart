@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:monopoly/controller/game_manager.dart';
 import 'package:monopoly/controller/lobby_manager.dart';
+import 'package:monopoly/controller/socket.controller.dart';
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
 import 'package:monopoly/vue/Plateau/info_card.dart';
@@ -26,6 +28,7 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   late bool de;
   @override
   void initState() {
+    SocketManager.socketmanager.onSocketUpdatePlateau = _onSocketUpdate;
     List<int> lid = [0, 1, 2, 3];
     de = false;
     LobbyManager.lobbyManager.getIdPlayers();
@@ -37,6 +40,11 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
     super.initState();
   }
 
+  void _onSocketUpdate() {
+    print("update");
+    setState(
+        () {}); // Mettre à jour l'état de la page lorsque les données du socket changent
+  }
 
   //si c'est ton tour
   // lancez les dés

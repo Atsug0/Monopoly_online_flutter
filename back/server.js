@@ -1,6 +1,8 @@
 // serveur.js
 const express = require('express');
 const db = require('./dbconfig');
+const http = require('http');
+const socketIo = require('socket.io');
 const routes = require('./routes'); 
 const cors = require('cors');
 const app = express();
@@ -21,8 +23,70 @@ app.use('/api', routes);
 
 // Port sur lequel le serveur Express écoutera
 const port = 8000;
+const PORT = 8008;
+
+const server = http.createServer(app);
+const io = socketIo(server);
+
+let connectedPlayers = [];
+
+io.on('connection', socket => {
+    console.log('New client connected');
+    
+    // Créer une partie
+    socket.on('createGame', playerId => {
+      const gameId = generateGameId();
+      socket.join(gameId);
+      connectedPlayers.push({ gameId, playerId });
+      io.to(gameId).emit('playersList', connectedPlayers.filter(player => player.gameId === gameId));
+    });
+    
+    // Rejoindre une partie
+    socket.on('joinGame', (gameId, playerId) => {
+        const isGameValid = connectedPlayers.some(player => player.gameId === gameId);
+        if (isGameValid) {
+          socket.join(gameId);
+          connectedPlayers.push({ gameId, playerId });
+          io.to(gameId).emit('playersList', connectedPlayers.filter(player => player.gameId === gameId));
+        } else {
+          // Emit un événement d'erreur si le gameId n'est pas valide
+          socket.emit('errorRoom', 'Game ID is not valid');
+        }
+    });
+    
+    // Lancer la partie
+    socket.on('startGame', gameId => {
+      io.to(gameId).emit('gameStarted');
+    });
+    
+    // Mise à jour des données
+    socket.on('updateData', (gameId) => {
+      io.to(gameId).emit('dataUpdate');
+    });
+    
+    // Fin de partie
+    socket.on('endGame', gameId => {
+      io.to(gameId).emit('gameEnded');
+    });
+    
+    socket.on('disconnect', () => {
+      console.log('Client disconnected');
+      // Supprimer le joueur déconnecté de la liste des joueurs connectés
+      connectedPlayers = connectedPlayers.filter(player => player.socketId !== socket.id);
+    });
+  });
 
 // Démarrer le serveur Express
+server.listen(PORT, () => {
+    const address = server.address();
+    console.log(`Serveur socket.io en cours d'écoute sur ${address.address}:${address.port}`);
+  });
+
 app.listen(port, () => {
   console.log('Serveur Express en cours d\'écoute sur le port ' + port);
+
 });
+
+function generateGameId() {
+    return Math.random().toString(36).substring(2, 10); // Génère un identifiant aléatoire
+  }

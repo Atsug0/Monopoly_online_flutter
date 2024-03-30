@@ -143,7 +143,7 @@ CREATE PROCEDURE IF NOT EXISTS authenticateUser(
     FROM users
     WHERE email = input OR username = input;
     IF user_hashpass IS NOT NULL THEN
-      SELECT user_id AS id, 'User trouvé' AS message, user_hashpass AS password;  
+      SELECT user_id AS id, 'User trouvé' AS message, user_hashpass AS password, user_id AS id;  
     ELSE
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Utilisateur non trouvé';
     END IF;

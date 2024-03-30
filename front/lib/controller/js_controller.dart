@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:monopoly/controller/game_manager.dart';
+import 'package:monopoly/controller/socket.controller.dart';
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,7 +75,9 @@ class JsManager {
         print('Réponse du serveur: ${response.body}');
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         prefs.setString('token', jsonResponse["token"]);
+        prefs.setString('id', jsonResponse["id"].toString());
         isConnected = true;
+        SocketManager.socketmanager.init();
         return true;
       } else {
         print(

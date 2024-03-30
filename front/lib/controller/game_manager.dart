@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:monopoly/controller/js_controller.dart';
+import 'package:monopoly/controller/socket.controller.dart';
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
 
@@ -54,13 +55,14 @@ class GameManager {
     for (Joueur j in lstJoueur) {
       JsManager.jsmanager.updatejoueur(j);
     }
+    SocketManager.socketmanager.updateData(SocketManager.socketmanager.idgame ?? "");
   }
 
   void transaction(int id1, int id2, int prix) {}
+
   void achat(int idJoueur, int idCard, int prix) {
     lstJoueur.elementAt(idJoueur).argent -= prix;
     lstJoueur.elementAt(idJoueur).biens.add(idCard);
-    //faire la modif en back
   }
 
   void deplacement(int idJoueur, int nbr) {
@@ -81,11 +83,6 @@ class GameManager {
             copie;
       }
     }
-    //faire l'update côté serv
-  }
-
-  int getDeplacement() {
-    return 0;
   }
 
   int action(int id) {
@@ -95,7 +92,7 @@ class GameManager {
 
     if (j2 != -1) {
       transaction(j.id, j2, c.prix);
-      return (0); // pop up tu payes
+      return (0);
     } else {
       if (c.chance) {
         return (1);

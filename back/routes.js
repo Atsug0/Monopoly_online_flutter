@@ -110,10 +110,11 @@ router.post('/authenticateuser', (req, res) => {
       }
       const secretKey = 'jhmnp';
       const token = jwt.sign({ id: user[0].id }, secretKey, { expiresIn: '24h' });
-    
+      const id = user[0].id;
       res.status(200).send({
         message: "Authentification réussie !",
-        token,
+        id: id,
+        token
       });
     });
   });

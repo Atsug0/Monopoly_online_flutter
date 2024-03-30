@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/controller/navigator_key.dart';
+import 'package:monopoly/controller/socket.controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(16.0),
                 child: GestureDetector(
                   onTap: () {
+                    SocketManager.socketmanager.createGame();
                     navigatorKey.currentState?.pushNamed("lobby").then((value) {
                       setState(() {});
                     });
