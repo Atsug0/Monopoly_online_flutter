@@ -6,11 +6,13 @@ import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/controller/socket.controller.dart';
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
+import 'package:monopoly/model/lobbyobj.dart';
 
 class GameManager {
   static GameManager cardManager = GameManager();
   late List<Carte> lstCarte;
   late List<Joueur> lstJoueur;
+  late LobbyObj lobby;
 
   Future<void> init() async {
     await JsManager.jsmanager.getjoueurs();
@@ -55,7 +57,8 @@ class GameManager {
     for (Joueur j in lstJoueur) {
       JsManager.jsmanager.updatejoueur(j);
     }
-    SocketManager.socketmanager.updateData(SocketManager.socketmanager.idgame ?? "");
+    SocketManager.socketmanager
+        .updateData(SocketManager.socketmanager.idgame ?? "");
   }
 
   void transaction(int id1, int id2, int prix) {}
@@ -114,7 +117,8 @@ class GameManager {
   }
 
   Color getColor(String color) {
-    switch (color) {
+    String test = color.substring(0, 1).toUpperCase() + color.substring(1);
+    switch (test) {
       case "SaddleBrown":
         return const Color(0xFF8b4513);
       case "DarkOrchid":

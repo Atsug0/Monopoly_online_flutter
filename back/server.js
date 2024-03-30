@@ -45,9 +45,49 @@ io.on('connection', socket => {
     socket.on('joinGame', (gameId, playerId) => {
         const isGameValid = connectedPlayers.some(player => player.gameId === gameId);
         if (isGameValid) {
-          socket.join(gameId);
-          connectedPlayers.push({ gameId, playerId });
-          io.to(gameId).emit('playersList', connectedPlayers.filter(player => player.gameId === gameId));
+            if (connectedPlayers.filter(player => player.gameId === gameId).length < 4) {
+                socket.join(gameId);
+                connectedPlayers.push({ gameId, playerId });
+                io.to(gameId).emit('playersList', connectedPlayers.filter(player => player.gameId === gameId));
+            } else {
+                // Emit un événement d'erreur si le nombre maximal de joueurs est atteint
+                socket.emit('errorRoom', 'Maximum number of players reached for this game');
+            }
+        } else {
+          // Emit un événement d'erreur si le gameId n'est pas valide
+          socket.emit('errorRoom', 'Game ID is not valid');
+        }
+    });
+
+    socket.on('addBot', (gameId, playerId) => {
+        const isGameValid = connectedPlayers.some(player => player.gameId === gameId);
+        if (isGameValid) {
+            if (connectedPlayers.filter(player => player.gameId === gameId).length < 4) {
+                connectedPlayers.push({ gameId, playerId });
+                io.to(gameId).emit('playersList', connectedPlayers.filter(player => player.gameId === gameId));
+            } else {
+                // Emit un événement d'erreur si le nombre maximal de joueurs est atteint
+                socket.emit('errorRoom', 'Maximum number of players reached for this game');
+            }
+        } else {
+          // Emit un événement d'erreur si le gameId n'est pas valide
+          socket.emit('errorRoom', 'Game ID is not valid');
+        }
+    });
+
+    socket.on('deleteBot', (gameId, playerId) => {
+        const isGameValid = connectedPlayers.some(player => player.gameId === gameId);
+        if (isGameValid) {
+            if (connectedPlayers.filter(player => player.gameId === gameId).length > 0) {
+                const existingPlayerIndex = connectedPlayers.findIndex(player => player.playerId === playerId);
+                if (existingPlayerIndex !== -1) {
+                    connectedPlayers.splice(existingPlayerIndex, 1);
+                }
+                io.to(gameId).emit('playersList', connectedPlayers.filter(player => player.gameId === gameId));
+            } else {
+                // Emit un événement d'erreur si le nombre maximal de joueurs est atteint
+                socket.emit('errorRoom', 'Pas assez de joueur');
+            }
         } else {
           // Emit un événement d'erreur si le gameId n'est pas valide
           socket.emit('errorRoom', 'Game ID is not valid');
@@ -55,7 +95,8 @@ io.on('connection', socket => {
     });
     
     // Lancer la partie
-    socket.on('startGame', gameId => {
+    socket.on('startGame', (gameId, gamenumber) => {
+        io.to(gameId).emit('gamestate', gamenumber);
       io.to(gameId).emit('gameStarted');
     });
     

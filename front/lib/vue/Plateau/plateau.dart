@@ -338,6 +338,7 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
                                   phrase: "Tu as fais $deplacement");
                             }).then((value) {
                           setState(() {
+                            print(bottomid);
                             GameManager.cardManager
                                 .deplacement(bottomid, deplacement);
                             int res = GameManager.cardManager.action(bottomid);

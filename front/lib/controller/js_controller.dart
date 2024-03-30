@@ -5,6 +5,7 @@ import 'package:monopoly/controller/game_manager.dart';
 import 'package:monopoly/controller/socket.controller.dart';
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
+import 'package:monopoly/model/lobbyobj.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class JsManager {
@@ -178,6 +179,8 @@ class JsManager {
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
         print('Réponse du serveur: ${response.body}');
+        GameManager.cardManager.lobby =
+            LobbyObj.fromJson(jsonDecode(response.body)[0]);
         return true;
       } else {
         print(
@@ -283,6 +286,8 @@ class JsManager {
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
         print('Réponse du serveur: ${response.body}');
+        await JsManager.jsmanager.getgame(lobbyid);
+
         return true;
       } else {
         print(

@@ -88,16 +88,12 @@ router.post('/authenticateuser', (req, res) => {
   const sqlQuery = `CALL authenticateUser(?)`;
   db.query(sqlQuery, [input], (err, results) => {
     if (err) {
-        console.log(err);
       return res.status(500).send("Authentification échouée");
     }
     if (results.length === 0) {
-        console.log("Utilisateur non trouvé");
       return res.status(404).send("Utilisateur non trouvé");
     }
     const user = results[0];
-    console.log(user[0]);
-    console.log(user[0].password);
     // Vérifier le mot de passe
     bcrypt.compare(password, user[0].password, (err, result) => {
       if (err) {
@@ -130,7 +126,6 @@ router.put(`/updatecartes`,auth, (req, res) => {
  });
 
 router.get(`/getcartes`,auth, (req, res) => {
-    console.log("requete carte");
   db.query(`SELECT * FROM cartes`, (err, results) => {
     if (err) {
       return res.status(500).send("Internal Server Error ! ");
@@ -139,14 +134,11 @@ router.get(`/getcartes`,auth, (req, res) => {
   });
 });
 router.get('/getjoueur',auth, (req, res) => {
-    console.log("requete joueur");
     db.query(`SELECT * FROM joueurs`,(err,results)=>{
         if (err) {
             console.log(err);
             throw err
         };
-        console.log("passé");
-        console.log(results);
         res.status(200).send(results);
     });
 });
@@ -179,7 +171,11 @@ router.post('/creategame', auth,(req, res) => {
     const sqlQuery = `CALL createGame(?,?,?,?,?,?,?,?,?)`;
     const sqlQuery2 = `CALL createJoueur(?,?,?,?,?,?,?)`;
     const { lobby_id, user_id,nb_joueurs,lst_joueurs,state,tour } = req.body;
-    const {j1,j2,j3,j4} = lst_joueurs;
+    let j1 = joueursArray[0];
+    let j2 = joueursArray[1]);
+    let j3 = joueursArray[2];
+    let j4 = joueursArray[3];
+    
     const argent = 1500;
     const prison = false;
     const position = 0;

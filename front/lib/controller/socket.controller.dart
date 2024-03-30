@@ -51,6 +51,11 @@ class SocketManager {
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
     });
 
+    socket.on('gamestate', (data) async {
+      print("data : $data");
+      await JsManager.jsmanager.getgame(data);
+    });
+
     socket.on('errorRoom', (err) {
       print("erreur : $err");
     });
@@ -76,16 +81,24 @@ class SocketManager {
     socket.emit('joinGame', {room, id});
   }
 
-  void startGame(String room) {
-    socket.emit('startGame', {'gameId': room});
+  void startGame(String room, int id) {
+    socket.emit('startGame', {room, id});
+  }
+
+  void addBot(String room, int id) {
+    socket.emit('addBot', {room, id});
+  }
+
+  void deleteBot(String room, int id) {
+    socket.emit('deleteBot', {room, id});
   }
 
   void updateData(String room) {
-    socket.emit('updateData', {'gameId': room});
+    socket.emit('updateData', {room});
   }
 
   void endGame(String room) {
-    socket.emit('endGame', {'gameId': room});
+    socket.emit('endGame', {room});
   }
 
   void fetchdata(dynamic json) {

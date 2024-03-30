@@ -28,8 +28,9 @@ class _LobbyState extends State<Lobby> {
 
   void _onSocketUpdate() {
     print("update");
-    setState(
-        () {}); // Mettre à jour l'état de la page lorsque les données du socket changent
+    setState(() {
+      _nbrConnection = SocketManager.socketmanager.players.length + _nbrBot;
+    }); // Mettre à jour l'état de la page lorsque les données du socket changent
   }
 
   @override
@@ -83,10 +84,11 @@ class _LobbyState extends State<Lobby> {
               child: GestureDetector(
                 onTap: () {
                   // Gérer les bots
-                  if (_nbrConnection < 4) {
+                  if (SocketManager.socketmanager.players.length < 4) {
                     setState(() {
-                      _nbrConnection += 1;
-                      _nbrBot += 1;
+                      _nbrBot -= 1;
+                      SocketManager.socketmanager.addBot(
+                          SocketManager.socketmanager.idgame ?? "", _nbrBot);
                     });
                   }
                 },
@@ -116,11 +118,12 @@ class _LobbyState extends State<Lobby> {
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
                 onTap: () {
-                  if (_nbrConnection >= 2 && _nbrBot > 0) {
+                  if (_nbrBot < 0) {
                     // Gérer les bots
                     setState(() {
-                      _nbrConnection -= 1;
-                      _nbrBot -= 1;
+                      SocketManager.socketmanager.deleteBot(
+                          SocketManager.socketmanager.idgame ?? "", _nbrBot);
+                      _nbrBot += 1;
                     });
                   }
                 },
@@ -146,7 +149,7 @@ class _LobbyState extends State<Lobby> {
                 ),
               ),
             ),
-            _nbrConnection == 4
+            SocketManager.socketmanager.players.length == 4
                 ? Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: GestureDetector(
@@ -170,7 +173,7 @@ class _LobbyState extends State<Lobby> {
                                 SocketManager.socketmanager.players.first,
                                 SocketManager.socketmanager.players.length,
                                 SocketManager.socketmanager.players);
-                            SocketManager.socketmanager.startGame(idgame);
+                            SocketManager.socketmanager.startGame(idgame, sum);
                           }
                         }
                       },
