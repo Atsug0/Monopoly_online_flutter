@@ -597,6 +597,16 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
           GameManager.cardManager.endTurn();
         });
         break;
+      case 7:
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RandomEvent(
+                  phrase: "Hop Hop Hop tu te prend une amende de ");
+            }).then((value) {
+          GameManager.cardManager.endTurn();
+        });
+        break;
       default:
         if (GameManager.cardManager.achetable(bottomid)) {
           showDialog(
@@ -611,7 +621,6 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
                 setState(() {
                   int index = GameManager.cardManager.lstJoueur
                       .indexWhere((element) => element.reference == bottomid);
-                  print("index5 $index");
                   Joueur j = GameManager.cardManager.lstJoueur.elementAt(index);
                   Carte c = GameManager.cardManager.lstCarte
                       .firstWhere((element) => element.position == j.position);

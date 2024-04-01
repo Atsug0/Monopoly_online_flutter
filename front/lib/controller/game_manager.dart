@@ -91,6 +91,19 @@ class GameManager {
     SocketManager.socketmanager.onSocketUpdatePlateau!();
   }
 
+  void prelevement(int id1, int prix) {
+    int index = lstJoueur.indexWhere((element) => element.reference == id1);
+    lstJoueur.elementAt(index).argent += prix;
+    lstCarte.firstWhere((element) => element.parc >= 1).parc += (-prix);
+  }
+
+  void wincagnotte(int id1) {
+    int index = lstJoueur.indexWhere((element) => element.reference == id1);
+    lstJoueur.elementAt(index).argent +=
+        lstCarte.firstWhere((element) => element.parc >= 1).parc;
+    lstCarte.firstWhere((element) => element.parc >= 1).parc = 1;
+  }
+
   void achat(int idJoueur, int idCard, int prix) {
     int index =
         lstJoueur.indexWhere((element) => element.reference == idJoueur);
@@ -131,14 +144,18 @@ class GameManager {
   }
 
   int action(int id) {
-    Joueur j = lstJoueur.firstWhere((element) => element.id == id);
+    Joueur j = lstJoueur.firstWhere((element) => element.reference == id);
     Carte c = lstCarte.firstWhere((element) => element.position == j.position);
     int j2 = getOwner(c);
 
-    if (j2 != -1) {
+    if (j2 != -999 && c.prix > 0) {
       transaction(j.id, j2, c.prix);
       return (0);
     } else {
+      if (c.prix < 0) {
+        prelevement(j.id, c.prix);
+        return (7);
+      }
       if (c.chance) {
         return (1);
       }
@@ -146,12 +163,16 @@ class GameManager {
         return (2);
       }
       if (c.goprison) {
+        int index =
+            lstJoueur.indexWhere((element) => element.reference == j.reference);
+        lstJoueur.elementAt(index).position = 10;
         return (3);
       }
       if (c.prison) {
         return (4);
       }
-      if (c.position == 21) {
+      if (c.position == 20) {
+        wincagnotte(j.id);
         return (5);
       }
     }
@@ -193,7 +214,7 @@ class GameManager {
 
   int getCagnote() {
     for (Carte c in lstCarte) {
-      if (c.parc > 0) {
+      if (c.parc >= 1) {
         return c.parc;
       }
     }
@@ -206,7 +227,7 @@ class GameManager {
         return j.id;
       }
     }
-    return -1;
+    return -999;
   }
 
   List<String> getListAddr(int id) {
