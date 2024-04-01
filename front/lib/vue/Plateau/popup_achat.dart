@@ -11,7 +11,9 @@ class PopUpAchat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Joueur j = GameManager.cardManager.lstJoueur.elementAt(id);
+    int index = GameManager.cardManager.lstJoueur
+        .indexWhere((element) => element.reference == id);
+    Joueur j = GameManager.cardManager.lstJoueur.elementAt(index);
     Carte c = GameManager.cardManager.lstCarte
         .firstWhere((element) => element.position == j.position);
     return BackdropFilter(

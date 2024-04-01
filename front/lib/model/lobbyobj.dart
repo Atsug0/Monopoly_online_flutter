@@ -17,7 +17,6 @@ class LobbyObj {
 
   factory LobbyObj.fromJson(Map<String, dynamic> json) {
     // Convertir la liste de joueurs de type String en liste de type int
-    print(json);
     List<int> lstJoueurs = [
       int.parse(json["j1"]),
       int.parse(json["j2"]),
