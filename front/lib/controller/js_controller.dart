@@ -178,9 +178,8 @@ class JsManager {
 
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
-        print('Réponse du serveur: ${response.body}');
         GameManager.cardManager.lobby =
-            LobbyObj.fromJson(jsonDecode(response.body)[0]);
+            LobbyObj.fromJson(jsonDecode(response.body)[0][0]);
         return true;
       } else {
         print(
@@ -196,7 +195,7 @@ class JsManager {
   Future<bool> updategame(int lobbyid, bool state, int tour) async {
     Map<String, dynamic> requestBody = {
       'lobby_id': lobbyid,
-      'state': state,
+      'state': state ? 1 : 0,
       'tour': tour
     };
 
@@ -261,6 +260,7 @@ class JsManager {
     for (int i in lstJoueurs) {
       lstj = "$lstj$i,";
     }
+    prefs.setInt("lobby", lobbyid);
     Map<String, dynamic> requestBody = {
       'lobby_id': lobbyid,
       'user_id': userid,
@@ -285,7 +285,6 @@ class JsManager {
 
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
-        print('Réponse du serveur: ${response.body}');
         await JsManager.jsmanager.getgame(lobbyid);
 
         return true;

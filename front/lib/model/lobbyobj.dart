@@ -3,8 +3,8 @@ class LobbyObj {
   final String userId;
   final int nbJoueurs;
   final List<int> lstJoueurs;
-  final bool state;
-  final int tour;
+  bool state;
+  int tour;
 
   LobbyObj({
     required this.lobbyId,
@@ -17,14 +17,20 @@ class LobbyObj {
 
   factory LobbyObj.fromJson(Map<String, dynamic> json) {
     // Convertir la liste de joueurs de type String en liste de type int
-    List<int> lstJoueurs = json['lst_joueurs'].split(',').map(int.parse).toList();
+    print(json);
+    List<int> lstJoueurs = [
+      int.parse(json["j1"]),
+      int.parse(json["j2"]),
+      int.parse(json["j3"]),
+      int.parse(json["j4"])
+    ];
 
     return LobbyObj(
-      lobbyId: json['lobby_id'],
-      userId: json['user_id'],
-      nbJoueurs: json['nb_joueurs'],
+      lobbyId: json['id'].toString(),
+      userId: json['user_id'].toString(),
+      nbJoueurs: json['nombreDeJoueur'],
       lstJoueurs: lstJoueurs,
-      state: json['state'],
+      state: json['state'] == 1 ? true : false,
       tour: json['tour'],
     );
   }

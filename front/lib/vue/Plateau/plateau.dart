@@ -1,10 +1,8 @@
-import 'dart:io';
 import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:monopoly/controller/game_manager.dart';
-import 'package:monopoly/controller/lobby_manager.dart';
+import 'package:monopoly/controller/navigator_key.dart';
 import 'package:monopoly/controller/socket.controller.dart';
 import 'package:monopoly/model/carte.dart';
 import 'package:monopoly/model/joueur.dart';
@@ -29,10 +27,9 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   @override
   void initState() {
     SocketManager.socketmanager.onSocketUpdatePlateau = _onSocketUpdate;
-    List<int> lid = [0, 1, 2, 3];
+    List<int> lid = GameManager.cardManager.lobby.lstJoueurs;
     de = false;
-    LobbyManager.lobbyManager.getIdPlayers();
-    bottomid = LobbyManager.lobbyManager.idPlayer;
+    bottomid = int.parse(GameManager.cardManager.lobby.userId);
     lid.removeWhere((element) => element == bottomid);
     leftid = lid.removeAt(0);
     rightid = lid.removeAt(0);
@@ -42,8 +39,12 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
 
   void _onSocketUpdate() {
     print("update");
-    setState(
-        () {}); // Mettre à jour l'état de la page lorsque les données du socket changent
+    setState(() {
+      if (GameManager.cardManager.lobby.state == false) {
+        //faire la sauvegarde des stats et quitter la partie
+        navigatorKey.currentState!.popUntil((route) => route.isFirst);
+      }
+    }); // Mettre à jour l'état de la page lorsque les données du socket changent
   }
 
   //si c'est ton tour
@@ -338,7 +339,6 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
                                   phrase: "Tu as fais $deplacement");
                             }).then((value) {
                           setState(() {
-                            print(bottomid);
                             GameManager.cardManager
                                 .deplacement(bottomid, deplacement);
                             int res = GameManager.cardManager.action(bottomid);
@@ -470,13 +470,15 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   }
 
   Widget getPlayerCard(int id) {
-    Joueur j = GameManager.cardManager.lstJoueur.elementAt(id);
+    int index = GameManager.cardManager.lstJoueur
+        .indexWhere((element) => element.reference == id);
+    Joueur j = GameManager.cardManager.lstJoueur.elementAt(index);
     return Material(
       color: Colors.transparent,
       child: Column(
         children: [
           AutoSizeText(
-            "Joueur ${j.id + 1}",
+            "Joueur ${j.id}",
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontFamily: 'Kabel-Bold',
@@ -537,7 +539,9 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
             context: context,
             builder: (BuildContext context) {
               return RandomEvent(phrase: GameManager.cardManager.getChance());
-            }).then((value) {});
+            }).then((value) {
+              GameManager.cardManager.endTurn();
+            });
         break;
       case 2:
         showDialog(
@@ -545,7 +549,9 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
             builder: (BuildContext context) {
               return RandomEvent(
                   phrase: GameManager.cardManager.getCommunaute());
-            }).then((value) {});
+            }).then((value) {
+              GameManager.cardManager.endTurn();
+            });
         break;
       case 3:
         showDialog(
@@ -566,7 +572,9 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
                 phrase:
                     "Petite visite en prison mais t'inquiete tu n'y reste pas",
               );
-            }).then((value) {});
+            }).then((value) {
+              GameManager.cardManager.endTurn();
+            });
         break;
       case 5:
         showDialog(
@@ -575,7 +583,9 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
               return const RandomEvent(
                 phrase: "Bravo tu as gagné le pactole",
               );
-            }).then((value) {});
+            }).then((value) {
+              GameManager.cardManager.endTurn();
+            });
         break;
       default:
         if (GameManager.cardManager.achetable(bottomid)) {
@@ -589,11 +599,14 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
             if (value != null) {
               if (value) {
                 setState(() {
-                  Joueur j =
-                      GameManager.cardManager.lstJoueur.elementAt(bottomid);
+                  int index = GameManager.cardManager.lstJoueur
+                      .indexWhere((element) => element.reference == bottomid);
+                  print("index5 $index");
+                  Joueur j = GameManager.cardManager.lstJoueur.elementAt(index);
                   Carte c = GameManager.cardManager.lstCarte
                       .firstWhere((element) => element.position == j.position);
                   GameManager.cardManager.achat(bottomid, c.position, c.prix);
+                  GameManager.cardManager.endTurn();
                 });
               }
             }

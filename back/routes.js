@@ -171,10 +171,10 @@ router.post('/creategame', auth,(req, res) => {
     const sqlQuery = `CALL createGame(?,?,?,?,?,?,?,?,?)`;
     const sqlQuery2 = `CALL createJoueur(?,?,?,?,?,?,?)`;
     const { lobby_id, user_id,nb_joueurs,lst_joueurs,state,tour } = req.body;
-    let j1 = joueursArray[0];
-    let j2 = joueursArray[1];
-    let j3 = joueursArray[2];
-    let j4 = joueursArray[3];
+    let j1 = lst_joueurs[0];
+    let j2 = lst_joueurs[1];
+    let j3 = lst_joueurs[2];
+    let j4 = lst_joueurs[3];
     
     const argent = 1500;
     const prison = false;

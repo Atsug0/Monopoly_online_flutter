@@ -17,6 +17,8 @@ class GameManager {
   Future<void> init() async {
     await JsManager.jsmanager.getjoueurs();
     await JsManager.jsmanager.getcartes();
+    int lob = JsManager.jsmanager.prefs.getInt("lobby") ?? 0;
+    await JsManager.jsmanager.getgame(lob);
   }
 
   void setCard(Carte carte) {}
@@ -34,7 +36,9 @@ class GameManager {
   }
 
   bool achetable(int id) {
-    Joueur j = lstJoueur.elementAt(id);
+    int index = lstJoueur.indexWhere((element) => element.reference == id);
+    print("index4 $index");
+    Joueur j = lstJoueur.elementAt(index);
     Carte c = lstCarte.firstWhere((element) => element.position == j.position);
     if (j.argent > c.prix) {
       return true;
@@ -47,43 +51,75 @@ class GameManager {
   }
 
   int getIdTurn() {
-    return 0;
+    return lobby.tour;
   }
 
   void endTurn() {
+    bool test = true;
     for (Carte c in lstCarte) {
       JsManager.jsmanager.updatecartes(c);
     }
     for (Joueur j in lstJoueur) {
       JsManager.jsmanager.updatejoueur(j);
+      if (j.argent > 0) {
+        test = false;
+      }
     }
+    int index = lobby.lstJoueurs.indexWhere((element) => element == lobby.tour);
+    if (index + 1 < lobby.lstJoueurs.length) {
+      lobby.tour = lobby.lstJoueurs[index + 1];
+    } else {
+      lobby.tour = lobby.lstJoueurs[0];
+    }
+    if (test) {
+      lobby.state = false;
+    }
+    JsManager.jsmanager
+        .updategame(int.parse(lobby.lobbyId), lobby.state, lobby.tour);
     SocketManager.socketmanager
         .updateData(SocketManager.socketmanager.idgame ?? "");
   }
 
-  void transaction(int id1, int id2, int prix) {}
+  void transaction(int id1, int id2, int prix) {
+    lstJoueur.firstWhere((element) => element.reference == id1).argent -= prix;
+    lstJoueur.firstWhere((element) => element.reference == id2).argent += prix;
+  }
 
   void achat(int idJoueur, int idCard, int prix) {
-    lstJoueur.elementAt(idJoueur).argent -= prix;
-    lstJoueur.elementAt(idJoueur).biens.add(idCard);
+    int index =
+        lstJoueur.indexWhere((element) => element.reference == idJoueur);
+    print("index1 $index");
+    lstJoueur.elementAt(index).argent -= prix;
+    lstJoueur.elementAt(index).biens.add(idCard);
   }
 
   void deplacement(int idJoueur, int nbr) {
-    if (lstJoueur.elementAt(idJoueur).position + nbr <= 39) {
-      lstJoueur.firstWhere((element) => element.id == idJoueur).position += nbr;
+    int index =
+        lstJoueur.indexWhere((element) => element.reference == idJoueur);
+    print("index2 $index");
+    if (lstJoueur.elementAt(index).position + nbr <= 39) {
+      lstJoueur
+          .firstWhere((element) => element.reference == idJoueur)
+          .position += nbr;
     } else {
-      if (lstJoueur.elementAt(idJoueur).position + nbr == 40) {
-        lstJoueur.firstWhere((element) => element.id == idJoueur).position = 0;
-        lstJoueur.firstWhere((element) => element.id == idJoueur).argent += 400;
+      if (lstJoueur.elementAt(index).position + nbr == 40) {
+        lstJoueur
+            .firstWhere((element) => element.reference == idJoueur)
+            .position = 0;
+        lstJoueur
+            .firstWhere((element) => element.reference == idJoueur)
+            .argent += 400;
       } else {
         int copie = nbr;
-        while (lstJoueur.elementAt(idJoueur).position != 40) {
-          lstJoueur.firstWhere((element) => element.id == idJoueur).position +=
-              1;
+        while (lstJoueur.elementAt(index).position != 40) {
+          lstJoueur
+              .firstWhere((element) => element.reference == idJoueur)
+              .position += 1;
           copie--;
         }
-        lstJoueur.firstWhere((element) => element.id == idJoueur).position =
-            copie;
+        lstJoueur
+            .firstWhere((element) => element.reference == idJoueur)
+            .position = copie;
       }
     }
   }
@@ -169,9 +205,10 @@ class GameManager {
 
   List<String> getListAddr(int id) {
     List<String> res = [];
-
+    int index = lstJoueur.indexWhere((element) => element.reference == id);
+    print("index3 $index");
     for (Carte carte in lstCarte) {
-      if (lstJoueur.elementAt(id).biens.contains(carte.position)) {
+      if (lstJoueur.elementAt(index).biens.contains(carte.position)) {
         res.add(carte.nom);
       }
     }

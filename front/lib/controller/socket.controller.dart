@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:monopoly/controller/game_manager.dart';
 import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/controller/navigator_key.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -43,6 +44,7 @@ class SocketManager {
       print("data update");
       await JsManager.jsmanager.getjoueurs();
       await JsManager.jsmanager.getcartes();
+      await JsManager.jsmanager.getgame(int.parse(GameManager.cardManager.lobby.lobbyId));
       notifySocketUpdatePlateau();
     });
 
