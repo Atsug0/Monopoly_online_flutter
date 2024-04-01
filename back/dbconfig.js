@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'roots',
-    password: 'roots',
+    user: 'root',
+    password: 'root',
     
 });
 
@@ -37,6 +37,16 @@ CREATE TABLE IF NOT EXISTS cartes (
     goprison BOOLEAN,
     prix_hotel INTEGER,
     prix_maison INTEGER
+);`);
+db.query(` -- Créer une table chance :
+CREATE TABLE IF NOT EXISTS chance (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    description TEXT
+);`);
+db.query(` -- Créer une table communaute :
+CREATE TABLE IF NOT EXISTS communaute (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    description TEXT
 );`);
 db.query(` -- Créer une table de parties :
 CREATE TABLE IF NOT EXISTS parties (
@@ -143,7 +153,7 @@ CREATE PROCEDURE IF NOT EXISTS authenticateUser(
     FROM users
     WHERE email = input OR username = input;
     IF user_hashpass IS NOT NULL THEN
-      SELECT user_id AS id, 'User trouvé' AS message, user_hashpass AS password, user_id AS id;  
+      SELECT user_id AS id, 'User trouvé' AS message, user_hashpass AS password;  
     ELSE
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Utilisateur non trouvé';
     END IF;
@@ -261,7 +271,44 @@ BEGIN
         position = position
     WHERE user_id = user_id;
 END ;`);
-
+const lst_chances = [
+    "Rendez-vous rue de la Paix",
+    "Avancez jusqu'à la case Départ",
+    "Rendez-vous à l'avenue Henri-Martin, si vous passez par la case Départ, recevez 200€",
+    "Avancez au Boulevard de la Villette, si vous passez par la case Départ, recevez 200€",
+    "Vous êtes imposé pour les réparations de voirie à raison de 40€ par maison et 115€ par hôtel",
+    "Avancez jusqu'à la case Gare de Lyon, si vous passez par la case Départ, recevez 200€",
+    "Vous avez gagné le prix de mots croisés, recevez 100€",
+    "La banque vous verse un dividende de 50€",
+    "Vous êtes libéré de prison, cette carte peut être conservée jusqu'à ce qu'elle soit utilisée ou vendue",
+    "Reculez de trois cases",
+    "Allez en prison. Rendez-vous directement en prison, ne passez pas par la case Départ, ne recevez pas 200€",
+    "Faîtes des réparations dans toutes vos maisons, 25€ par maison, 100€ par hôtel",
+    "Amende pour excès de vitesse, 15€",
+    "Payez pour frais de scolarité, 150€",
+    "Amende pour ivresse, 20€",
+    "Votre immeuble et votre prêt rapportent, vous devez toucher 150€"
+];
+const lst_communautes = [
+    "Placez-vous sur la case Départ",
+    "Erreur de la banque en votre faveur, recevez 200€",
+    "Payez la note du médecin, 50€",
+    "La vente de votre stock vous rapporte 50€",
+    "Vous êtes libéré de prison, cette carte peut être conservée jusqu'à ce qu'elle soit utilisée ou vendue",
+    "Allez en prison. Rendez-vous directement en prison, ne passez pas par la case Départ, ne recevez pas 200€",
+    "Retournez à Belleville",
+    "Recevez votre revenu annuel, 100€",
+    "C'est votre anniversaire, chaque joueur doit vous donner 10€",
+    "Les contributions vous remboursent la somme de 20€",
+    "Recevez votre intérêt sur l'emprunt à 7%, 25€",
+    "Payez la police d'assurance s'élevant à 50€",
+    "Payez une amende de 10€ ou tirez une carte Chance",
+    "Rendez-vous à la gare la plus proche. Si vous passez par la case Départ, recevez 200€",
+    "Vous avez gagné le deuxième prix de beauté, recevez 10€",
+    "Vous héritez de 100€"
+];
+db.query(`INSERT INTO chance (description) VALUES ?`, [lst_chances.map(chance => [chance])]);
+db.query(`INSERT INTO communaute (description) VALUES ?`, [lst_communautes.map(communaute => [communaute])]);
 class Carte {
     nom; 
     prix; 
