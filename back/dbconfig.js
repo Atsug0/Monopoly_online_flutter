@@ -19,6 +19,7 @@ db.connect((err) => {
 db.query(`CREATE DATABASE IF NOT EXISTS monop;`);
 db.query(`USE monop;`);
 db.query('DROP TABLE IF EXISTS cartes;');
+db.query('DROP TABLE IF EXISTS joueurs;');
 db.query(` -- Créer une table de cartes :
 CREATE TABLE IF NOT EXISTS cartes (
     id INTEGER PRIMARY KEY,
@@ -271,6 +272,20 @@ BEGIN
         position = position
     WHERE user_id = user_id;
 END ;`);
+db.query(`-- Get carte communaute :
+CREATE PROCEDURE IF NOT EXISTS getcommunaute()
+BEGIN
+    SELECT description FROM communaute 
+    WHERE id = RAND() * (SELECT MAX(id) FROM communaute);
+    END ;
+`);
+db.query(`-- Get carte chance :
+CREATE PROCEDURE IF NOT EXISTS getchance()
+BEGIN
+    SELECT description FROM chance 
+    WHERE id = RAND() * (SELECT MAX(id) FROM chance);
+    END ;
+`);
 const lst_chances = [
     "Rendez-vous rue de la Paix",
     "Avancez jusqu'à la case Départ",
