@@ -60,6 +60,37 @@ passport.use(new JwtStrategy(options, (jwtPayload, done) => {
 const auth = passport.authenticate('jwt', { session: false });
 
 const router = express.Router();
+router.post('/finpartie', (req, res) => {
+  require('./dbconfig.js');
+  db.query(`DROP TABLE IF EXISTS parties`, (err, results) => {
+    if (err) {
+      return res.status(500).send("Internal Server Error ! ");
+    }
+    res.status(200).send(results);
+  });
+  
+});
+
+router.get('/communaute', (req, res) => {
+ 
+  const sqlQuery = `CALL getcommunaute()`;
+  db.query(sqlQuery, (err, results) => {  
+    if (err) {
+      return res.status(500).send("Internal Server Error ! ");
+    }
+    res.status(200).send(results);
+  });
+});
+router.get('/chance', (req, res) => {
+ 
+  const sqlQuery = `CALL getchance()`;
+  db.query(sqlQuery,  (err, results) => {  
+    if (err) {
+      return res.status(500).send("Internal Server Error ! ");
+    }
+    res.status(200).send(results);
+  });
+});
 
 router.post('/registeruser', (req, res) => {
   const { username, email, password } = req.body;
