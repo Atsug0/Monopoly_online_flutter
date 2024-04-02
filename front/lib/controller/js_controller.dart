@@ -100,7 +100,7 @@ class JsManager {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
             'Accept': '*/*',
-            'token': token
+            'Authorization': 'Bearer $token'
           });
 
       // Vérifier le code de réponse
@@ -147,7 +147,7 @@ class JsManager {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
             'Accept': '*/*',
-            'token': token
+            'Authorization': 'Bearer $token'
           });
 
       // Vérifier le code de réponse
@@ -155,8 +155,7 @@ class JsManager {
         print('Réponse du serveur: ${response.body}');
         return true;
       } else {
-        print(
-            'Échec de la requête avec le code de statut: ${response.statusCode}');
+        print('Échec de la requête avec le code de statut: ${response.body}');
         return false;
       }
     } catch (e) {
@@ -364,28 +363,28 @@ class JsManager {
   }
 
   Future<bool> getjoueurs() async {
-    try {
-      String token = prefs.getString('token') ?? "";
-      final response = await http
-          .get(Uri.parse('http://localhost:8000/api/getjoueur'), headers: {
-        "Access-Control-Allow-Origin": "*",
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        'Authorization': 'Bearer $token'
-      });
+    //try {
+    String token = prefs.getString('token') ?? "";
+    final response = await http
+        .get(Uri.parse('http://localhost:8000/api/getjoueur'), headers: {
+      "Access-Control-Allow-Origin": "*",
+      'Content-Type': 'application/json',
+      'Accept': '*/*',
+      'Authorization': 'Bearer $token'
+    });
 
-      // Vérifier le code de réponse
-      if (response.statusCode == 200) {
-        GameManager.cardManager.lstJoueur = Joueur.parseJoueurs(response.body);
-        return true;
-      } else {
-        print(
-            'Échec de la requête avec le code de statut: ${response.statusCode}');
-        return false;
-      }
-    } catch (e) {
-      print('Erreur lors de la requête getJoueur: $e');
+    // Vérifier le code de réponse
+    if (response.statusCode == 200) {
+      GameManager.cardManager.lstJoueur = Joueur.parseJoueurs(response.body);
+      return true;
+    } else {
+      print(
+          'Échec de la requête avec le code de statut: ${response.statusCode}');
       return false;
     }
+    // } catch (e) {
+    //   print('Erreur lors de la requête getJoueur: $e');
+    //   return false;
+    // }
   }
 }

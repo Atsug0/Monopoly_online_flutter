@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:monopoly/controller/game_manager.dart';
 import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/controller/navigator_key.dart';
+import 'package:monopoly/model/joueur.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class SocketManager {
@@ -42,9 +43,17 @@ class SocketManager {
 
     socket.on('dataUpdate', (_) async {
       print("data update");
-      await JsManager.jsmanager.getjoueurs();
-      await JsManager.jsmanager.getcartes();
-      await JsManager.jsmanager.getgame(int.parse(GameManager.cardManager.lobby.lobbyId));
+      await JsManager.jsmanager.getjoueurs().then((value) {
+        notifySocketUpdatePlateau();
+      });
+      await JsManager.jsmanager.getcartes().then((value) {
+        notifySocketUpdatePlateau();
+      });
+      await JsManager.jsmanager
+          .getgame(int.parse(GameManager.cardManager.lobby.lobbyId))
+          .then((value) {
+        notifySocketUpdatePlateau();
+      });
       notifySocketUpdatePlateau();
     });
 
@@ -96,6 +105,7 @@ class SocketManager {
   }
 
   void updateData(String room) {
+    print("ceci est la room :" + room);
     socket.emit('updateData', {room});
   }
 
@@ -106,7 +116,6 @@ class SocketManager {
   void fetchdata(dynamic json) {
     // Récupérer le gameId d'une entrée dans la liste
     idgame = json[0]['gameId'];
-    print(json);
     print('Game ID: $idgame');
     // Stocker tous les playerId dans une liste d'entiers
     players = [];

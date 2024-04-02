@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:monopoly/controller/game_manager.dart';
+import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/controller/navigator_key.dart';
 import 'package:monopoly/controller/socket.controller.dart';
 import 'package:monopoly/model/carte.dart';
@@ -27,13 +28,21 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   @override
   void initState() {
     SocketManager.socketmanager.onSocketUpdatePlateau = _onSocketUpdate;
-    List<int> lid = GameManager.cardManager.lobby.lstJoueurs;
+    List<int> lid = [];
+    for (int i in GameManager.cardManager.lobby.lstJoueurs) {
+      lid.add(i);
+    }
+    print(lid);
+    print(GameManager.cardManager.lobby.lstJoueurs);
     de = false;
-    bottomid = int.parse(GameManager.cardManager.lobby.userId);
+    bottomid = int.parse(JsManager.jsmanager.prefs.getString("id") ??
+        GameManager.cardManager.lobby.userId);
     lid.removeWhere((element) => element == bottomid);
     leftid = lid.removeAt(0);
     rightid = lid.removeAt(0);
     topid = lid.removeAt(0);
+    print(lid);
+    print(GameManager.cardManager.lobby.lstJoueurs);
     super.initState();
   }
 
@@ -472,6 +481,7 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   Widget getPlayerCard(int id) {
     int index = GameManager.cardManager.lstJoueur
         .indexWhere((element) => element.reference == id);
+    print("index = $index et id = $id");
     Joueur j = GameManager.cardManager.lstJoueur.elementAt(index);
     return Material(
       color: Colors.transparent,
@@ -540,8 +550,8 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
             builder: (BuildContext context) {
               return RandomEvent(phrase: GameManager.cardManager.getChance());
             }).then((value) {
-              GameManager.cardManager.endTurn();
-            });
+          GameManager.cardManager.endTurn();
+        });
         break;
       case 2:
         showDialog(
@@ -550,8 +560,8 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
               return RandomEvent(
                   phrase: GameManager.cardManager.getCommunaute());
             }).then((value) {
-              GameManager.cardManager.endTurn();
-            });
+          GameManager.cardManager.endTurn();
+        });
         break;
       case 3:
         showDialog(
@@ -573,8 +583,8 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
                     "Petite visite en prison mais t'inquiete tu n'y reste pas",
               );
             }).then((value) {
-              GameManager.cardManager.endTurn();
-            });
+          GameManager.cardManager.endTurn();
+        });
         break;
       case 5:
         showDialog(
@@ -584,8 +594,18 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
                 phrase: "Bravo tu as gagné le pactole",
               );
             }).then((value) {
-              GameManager.cardManager.endTurn();
-            });
+          GameManager.cardManager.endTurn();
+        });
+        break;
+      case 7:
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RandomEvent(
+                  phrase: "Hop Hop Hop tu te prend une amende de ");
+            }).then((value) {
+          GameManager.cardManager.endTurn();
+        });
         break;
       default:
         if (GameManager.cardManager.achetable(bottomid)) {
@@ -601,7 +621,6 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
                 setState(() {
                   int index = GameManager.cardManager.lstJoueur
                       .indexWhere((element) => element.reference == bottomid);
-                  print("index5 $index");
                   Joueur j = GameManager.cardManager.lstJoueur.elementAt(index);
                   Carte c = GameManager.cardManager.lstCarte
                       .firstWhere((element) => element.position == j.position);

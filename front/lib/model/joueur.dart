@@ -21,19 +21,24 @@ class Joueur {
     required this.position,
   });
 
+  static List<int> stringToIntList(String input) {
+    if (input.isEmpty) {
+      return [];
+    }
+    List<String> parts = input.split(',');
+    parts.removeWhere((element) => element.isEmpty);
+    List<int> result = parts.map((e) => int.tryParse(e) ?? 0).toList();
+
+    return result;
+  }
+
   factory Joueur.fromJson(Map<String, dynamic> json) => Joueur(
         id: json['id'],
         reference: json['user_id'],
         argent: json['argent'],
         couleur: json['couleur'],
-        biens: (json['biens'] as String).isNotEmpty ? (json['biens'] as String)
-            .split(',')
-            .map((e) => int.parse(e))
-            .toList() : [],
-        cartes: (json['cartes'] as String).isNotEmpty ? (json['cartes'] as String)
-            .split(',')
-            .map((e) => int.parse(e))
-            .toList() : [],
+        biens: stringToIntList(json['biens'] as String),
+        cartes: stringToIntList(json['cartes'] as String),
         prison: json['prison'] == 0 ? false : true,
         position: json['position'],
       );
@@ -43,7 +48,7 @@ class Joueur {
         'user_id': reference,
         'argent': argent,
         'couleur': couleur,
-        'biens':  biens.isNotEmpty ? biens.join(',') : "",
+        'biens': biens.isNotEmpty ? biens.join(',') : "",
         'cartes': cartes.isNotEmpty ? cartes.join(',') : "",
         'prison': prison ? 1 : 0,
         'position': position,

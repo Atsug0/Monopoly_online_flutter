@@ -117,9 +117,9 @@ router.post('/authenticateuser', (req, res) => {
 });
 router.put(`/updatecartes`,auth, (req, res) => {
  
-  const {carte_id, acheteur_id,maison,hotel,parc} = req.body;
-  const sqlQuery = `CALL updatecarte(?,?,?,?,?,?,?)`;
-  db.query(sqlQuery,[carte_id, acheteur_id,maison,hotel,parc],(err,results)=>{
+  const {carte_id,acheteur_id,maison,hotel,parc} = req.body;
+  const sqlQuery = `CALL updatecarte(?,?,?,?,?)`;
+  db.query(sqlQuery,[carte_id,acheteur_id,maison,hotel,parc],(err,results)=>{
     if (err) throw err;
     res.status(200).send("Carte updated !");
   });
@@ -143,7 +143,7 @@ router.get('/getjoueur',auth, (req, res) => {
     });
 });
 router.put('/updatejoueur',auth, (req, res) => {
-  const sqlQuery = `CALL updateJoueur(?,?,?,?,?,?,?,?)`;
+  const sqlQuery = `CALL updateJoueur(?,?,?,?,?,?,?)`;
   const {user_id, argent, couleur, lst_biens, lst_cartes, prison, position} = req.body;
   db.query(sqlQuery,[user_id,argent,couleur,lst_biens,lst_cartes,prison,position],(err,results)=>{
       if (err) throw err;
