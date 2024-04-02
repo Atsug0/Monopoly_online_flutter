@@ -128,7 +128,7 @@ class JsManager {
       lstcartes = "$lstcartes$i,";
     }
     Map<String, dynamic> requestBody = {
-      'user_id': j.id,
+      'user_id': j.reference,
       'argent': j.argent,
       'couleur': j.couleur,
       'lst_biens': lstbien,
@@ -152,7 +152,6 @@ class JsManager {
 
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
-        print('Réponse du serveur: ${response.body}');
         return true;
       } else {
         print('Échec de la requête avec le code de statut: ${response.body}');
@@ -213,7 +212,6 @@ class JsManager {
 
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
-        print('Réponse du serveur: ${response.body}');
         return true;
       } else {
         print(
@@ -322,7 +320,6 @@ class JsManager {
 
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
-        print('Réponse du serveur: ${response.body}');
         return true;
       } else {
         print(
@@ -363,28 +360,83 @@ class JsManager {
   }
 
   Future<bool> getjoueurs() async {
-    //try {
-    String token = prefs.getString('token') ?? "";
-    final response = await http
-        .get(Uri.parse('http://localhost:8000/api/getjoueur'), headers: {
-      "Access-Control-Allow-Origin": "*",
-      'Content-Type': 'application/json',
-      'Accept': '*/*',
-      'Authorization': 'Bearer $token'
-    });
+    try {
+      String token = prefs.getString('token') ?? "";
+      final response = await http
+          .get(Uri.parse('http://localhost:8000/api/getjoueur'), headers: {
+        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        'Authorization': 'Bearer $token'
+      });
 
-    // Vérifier le code de réponse
-    if (response.statusCode == 200) {
-      GameManager.cardManager.lstJoueur = Joueur.parseJoueurs(response.body);
-      return true;
-    } else {
-      print(
-          'Échec de la requête avec le code de statut: ${response.statusCode}');
+      // Vérifier le code de réponse
+      if (response.statusCode == 200) {
+        GameManager.cardManager.lstJoueur = Joueur.parseJoueurs(response.body);
+        return true;
+      } else {
+        print(
+            'Échec de la requête avec le code de statut: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erreur lors de la requête getJoueur: $e');
       return false;
     }
-    // } catch (e) {
-    //   print('Erreur lors de la requête getJoueur: $e');
-    //   return false;
-    // }
   }
+
+  Future<String> getchance() async {
+    try {
+      String token = prefs.getString('token') ?? "";
+      final response = await http.get(
+          Uri.parse('http://localhost:8000/api/chance'),
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            'Content-Type': 'application/json',
+            'Accept': '*/*',
+            'Authorization': 'Bearer $token'
+          });
+
+      // Vérifier le code de réponse
+      if (response.statusCode == 200) {
+        print('Réponse du serveur: ${response.body}');
+        return response.body;
+      } else {
+        print(
+            'Échec de la requête avec le code de statut: ${response.statusCode}');
+        return response.statusCode.toString();
+      }
+    } catch (e) {
+      print('Erreur lors de la requête: $e');
+      return e.toString();
+    }
+  }
+
+  Future<String> getcommun() async {
+    try {
+      String token = prefs.getString('token') ?? "";
+      final response = await http.get(
+          Uri.parse('http://localhost:8000/api/communaute'),
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            'Content-Type': 'application/json',
+            'Accept': '*/*',
+            'Authorization': 'Bearer $token'
+          });
+
+      // Vérifier le code de réponse
+      if (response.statusCode == 200) {
+        print('Réponse du serveur: ${response.body}');
+        return response.body;
+      } else {
+        print(
+            'Échec de la requête avec le code de statut: ${response.statusCode}');
+        return response.statusCode.toString();
+      }
+    } catch (e) {
+      print('Erreur lors de la requête: $e');
+      return e.toString();
+    }
+  }
+
 }

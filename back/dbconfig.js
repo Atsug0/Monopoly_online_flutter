@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS users(
 `);
 db.query(` -- Mettre à jour une carte avec id :
 CREATE PROCEDURE IF NOT EXISTS updatecarte(
-    carte_id INTEGER,
+    carte_ids INTEGER,
     acheteur_new INTEGER,
     maison_new INTEGER,
     hotel_new INTEGER,
@@ -99,7 +99,7 @@ CREATE PROCEDURE IF NOT EXISTS updatecarte(
       maison = COALESCE(maison_new, maison),           
       hotel = COALESCE(hotel_new, hotel),              
       parc = COALESCE(parc_new, parc)                   
-    WHERE id = carte_id;
+    WHERE id = carte_ids;
 END;
 `);
 
@@ -199,7 +199,7 @@ END ;
 `);
 db.query(`--  Mettre à jour une partie :
 CREATE PROCEDURE IF NOT EXISTS updateGame(
-    id INTEGER,
+    ids INTEGER,
     state BOOLEAN,
     tour INTEGER
 )
@@ -208,7 +208,7 @@ BEGIN
     SET
         state = state,
         tour = tour
-    WHERE id = id;
+    WHERE id = ids;
 END ;
 `);
 db.query(`-- Get Partie avec id  :   
@@ -253,24 +253,24 @@ END ;
 
 db.query(`-- Mettre à jour un joueur :
 CREATE PROCEDURE IF NOT EXISTS updatejoueur(
-    id INTEGER,
-    argent INTEGER,
-    couleur TEXT,
-    biens TEXT,
-    cartes TEXT,
-    prison BOOLEAN,
-    position INTEGER
+    new_cid INTEGER,
+    new_argent INTEGER,
+    new_couleur TEXT,
+    new_biens TEXT,
+    new_cartes TEXT,
+    new_prison BOOLEAN,
+    new_position INTEGER
 )
 BEGIN
     UPDATE joueurs
     SET
-        argent = argent,
-        couleur = couleur,
-        biens = biens,
-        cartes = cartes,
-        prison = prison,
-        position = position
-    WHERE user_id = id;
+        argent = COALESCE(new_argent, argent),
+        couleur = COALESCE(new_couleur, couleur),
+        biens = COALESCE(new_biens, biens),
+        cartes = COALESCE(new_cartes, cartes),
+        prison = COALESCE(new_prison, prison),
+        position = COALESCE(new_position, position)
+    WHERE user_id = new_cid;
 END ;`);
 db.query(`-- Get carte communaute :
 CREATE PROCEDURE IF NOT EXISTS getcommunaute()

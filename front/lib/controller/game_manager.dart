@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:js_interop';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -21,18 +23,268 @@ class GameManager {
     await JsManager.jsmanager.getgame(lob);
   }
 
+  static const lst_chances = [
+    "Rendez-vous rue de la Paix",
+    "Avancez jusqu'à la case Départ",
+    "Rendez-vous à l'avenue Henri-Martin, si vous passez par la case Départ, recevez 200€",
+    "Avancez au Boulevard de la Villette, si vous passez par la case Départ, recevez 200€",
+    "Vous êtes imposé pour les réparations de voirie à raison de 40€ par maison et 115€ par hôtel",
+    "Avancez jusqu'à la case Gare de Lyon, si vous passez par la case Départ, recevez 200€",
+    "Vous avez gagné le prix de mots croisés, recevez 100€",
+    "La banque vous verse un dividende de 50€",
+    "Vous êtes libéré de prison, cette carte peut être conservée jusqu'à ce qu'elle soit utilisée ou vendue",
+    "Reculez de trois cases",
+    "Allez en prison. Rendez-vous directement en prison, ne passez pas par la case Départ, ne recevez pas 200€",
+    "Faîtes des réparations dans toutes vos maisons, 25€ par maison, 100€ par hôtel",
+    "Amende pour excès de vitesse, 15€",
+    "Payez pour frais de scolarité, 150€",
+    "Amende pour ivresse, 20€",
+    "Votre immeuble et votre prêt rapportent, vous devez toucher 150€"
+  ];
+
+  static const lst_communautes = [
+    "Placez-vous sur la case Départ",
+    "Erreur de la banque en votre faveur, recevez 200€",
+    "Payez la note du médecin, 50€",
+    "La vente de votre stock vous rapporte 50€",
+    "Vous êtes libéré de prison, cette carte peut être conservée jusqu'à ce qu'elle soit utilisée ou vendue",
+    "Allez en prison. Rendez-vous directement en prison, ne passez pas par la case Départ, ne recevez pas 200€",
+    "Retournez à Belleville",
+    "Recevez votre revenu annuel, 100€",
+    "C'est votre anniversaire, chaque joueur doit vous donner 10€",
+    "Les contributions vous remboursent la somme de 20€",
+    "Recevez votre intérêt sur l'emprunt à 7%, 25€",
+    "Payez la police d'assurance s'élevant à 50€",
+    "Payez une amende de 10€ ou tirez une carte Chance",
+    "Rendez-vous à la gare la plus proche. Si vous passez par la case Départ, recevez 200€",
+    "Vous avez gagné le deuxième prix de beauté, recevez 10€",
+    "Vous héritez de 100€"
+  ];
   void setCard(Carte carte) {}
   void getCards() {}
   void addHouse() {}
   void addHotels() {}
   void canHaveHouses() {}
   void canHaveHotels() {}
-  String getChance() {
-    return "0";
+
+  Future<String> getChance() async {
+    final Random random = Random();
+    final index = random.nextInt(lst_chances.length);
+    switch (index) {
+      case 0:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 39;
+        break;
+      case 1:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 0;
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 400;
+        break;
+      case 2:
+        if (lstJoueur
+                .firstWhere((element) => element.reference == lobby.tour)
+                .position >
+            24) {
+          lstJoueur
+              .firstWhere((element) => element.reference == lobby.tour)
+              .argent += 200;
+        }
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 24;
+        break;
+      case 3:
+        if (lstJoueur
+                .firstWhere((element) => element.reference == lobby.tour)
+                .position >
+            11) {
+          lstJoueur
+              .firstWhere((element) => element.reference == lobby.tour)
+              .argent += 200;
+        }
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 11;
+        break;
+      case 4:
+        break;
+      case 5:
+        if (lstJoueur
+                .firstWhere((element) => element.reference == lobby.tour)
+                .position >
+            15) {
+          lstJoueur
+              .firstWhere((element) => element.reference == lobby.tour)
+              .argent += 200;
+        }
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 15;
+        break;
+      case 6:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 100;
+        break;
+      case 7:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 50;
+        break;
+      case 8:
+        break;
+      case 9:
+        if (lstJoueur
+                    .firstWhere((element) => element.reference == lobby.tour)
+                    .position -
+                3 <
+            0) {
+          lstJoueur
+              .firstWhere((element) => element.reference == lobby.tour)
+              .argent += 200;
+          lstJoueur
+              .firstWhere((element) => element.reference == lobby.tour)
+              .position = lstJoueur
+                  .firstWhere((element) => element.reference == lobby.tour)
+                  .position -
+              3 +
+              39;
+        } else {
+          lstJoueur
+              .firstWhere((element) => element.reference == lobby.tour)
+              .position -= 3;
+        }
+
+        break;
+      case 10:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 10;
+        break;
+      case 11:
+        break;
+      case 12:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 15;
+        break;
+      case 13:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 150;
+        break;
+      case 14:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent -= 20;
+        break;
+      case 15:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 150;
+        break;
+    }
+    SocketManager.socketmanager.onSocketUpdatePlateau!();
+    return lst_chances[index];
   }
 
-  String getCommunaute() {
-    return "0";
+  Future<String> getCommunaute() async {
+    final Random random = Random();
+    final index = random.nextInt(lst_communautes.length);
+    lstJoueur
+        .firstWhere((element) => element.reference == lobby.tour)
+        .position = 0;
+    lstJoueur.firstWhere((element) => element.reference == lobby.tour).argent +=
+        400;
+    switch (index) {
+      case 0:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 0;
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 400;
+        break;
+      case 1:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 200;
+        break;
+      case 2:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 50;
+        break;
+      case 3:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 50;
+        break;
+      case 4:
+        break;
+      case 5:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 10;
+        break;
+      case 6:
+        if (lstJoueur
+                .firstWhere((element) => element.reference == lobby.tour)
+                .position >
+            1) {
+          lstJoueur
+              .firstWhere((element) => element.reference == lobby.tour)
+              .argent += 200;
+        }
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .position = 1;
+        break;
+      case 7:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 100;
+        break;
+      case 8:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 10;
+        break;
+      case 9:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 20;
+        break;
+      case 10:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 25;
+        break;
+      case 11:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent -= 50;
+        break;
+      case 12:
+        break;
+      case 13:
+        break;
+      case 14:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 10;
+        break;
+      case 15:
+        lstJoueur
+            .firstWhere((element) => element.reference == lobby.tour)
+            .argent += 100;
+        break;
+    }
+    return lst_communautes[index];
   }
 
   bool achetable(int id) {
@@ -53,7 +305,7 @@ class GameManager {
     return lobby.tour;
   }
 
-  void endTurn() async {
+  Future<void> endTurn() async {
     bool test = true;
     for (Carte c in lstCarte) {
       await JsManager.jsmanager.updatecartes(c);
@@ -67,9 +319,6 @@ class GameManager {
       }
     }
     int index = lobby.lstJoueurs.indexWhere((element) => element == lobby.tour);
-    print("ceci est l'index : $index");
-    print("ceci est tour : ${lobby.tour}");
-    print("ceci est lstJoueurs : ${lobby.lstJoueurs}");
     if (index + 1 < lobby.lstJoueurs.length) {
       lobby.tour = lobby.lstJoueurs[index + 1];
     } else {
@@ -83,6 +332,56 @@ class GameManager {
     SocketManager.socketmanager
         .updateData(SocketManager.socketmanager.idgame ?? "");
     SocketManager.socketmanager.onSocketUpdatePlateau!();
+    Timer(Duration(seconds: 2), () {
+      if (lobby.tour < 0) {
+        print("ici");
+        print(lobby.tour);
+        print(lobby.lstJoueurs);
+        for (Joueur j in lstJoueur) {
+          print("reference = " + j.reference.toString());
+        }
+        iatour();
+      }
+    });
+  }
+
+  void iatour() async {
+    print("étape 1");
+    Random random = Random();
+    int dep = random.nextInt(6) + random.nextInt(6) + 2;
+    int index =
+        lstJoueur.indexWhere((element) => element.reference == lobby.tour);
+    Joueur j = lstJoueur.elementAt(index);
+    print(j.position.toString() + "ceci est ca position avant dep");
+    Carte c = lstCarte.firstWhere((element) => element.position == j.position);
+    deplacement(lobby.tour, dep);
+    j = lstJoueur.elementAt(index);
+    print(j.position.toString() + "ceci est ca position après dep");
+    c = lstCarte.firstWhere((element) => element.position == j.position);
+
+    print("étape 2");
+    int ac = action(lobby.tour);
+    print("étape 3");
+    if (ac == 6) {
+      print("étape 4");
+      if (achetable(lobby.tour)) {
+        print("étape 5");
+        print("étape 6.bis");
+        achat(lobby.tour, c.position, c.prix);
+        print("étape 7.bis");
+        j = lstJoueur.elementAt(index);
+        print(j.position.toString() + "ceci est ca position après dep");
+        await endTurn();
+        print("étape 8.bis");
+        return;
+      }
+    }
+    print("étape 6");
+    j = lstJoueur.elementAt(index);
+    print(j.position.toString() + "ceci est ca position après dep");
+    await endTurn();
+    print("étape 7");
+    return;
   }
 
   void transaction(int id1, int id2, int prix) {
@@ -109,6 +408,8 @@ class GameManager {
         lstJoueur.indexWhere((element) => element.reference == idJoueur);
     lstJoueur.elementAt(index).argent -= prix;
     lstJoueur.elementAt(index).biens.add(idCard);
+    lstCarte.firstWhere((element) => element.position == idCard).acheteurId =
+        idJoueur;
     SocketManager.socketmanager.onSocketUpdatePlateau!();
   }
 
@@ -128,6 +429,9 @@ class GameManager {
             .firstWhere((element) => element.reference == idJoueur)
             .argent += 400;
       } else {
+        lstJoueur
+            .firstWhere((element) => element.reference == idJoueur)
+            .argent += 200;
         int copie = nbr;
         while (lstJoueur.elementAt(index).position != 40) {
           lstJoueur
@@ -145,15 +449,18 @@ class GameManager {
 
   int action(int id) {
     Joueur j = lstJoueur.firstWhere((element) => element.reference == id);
+    print(j.reference.toString() + "Joeur j");
     Carte c = lstCarte.firstWhere((element) => element.position == j.position);
+    print(c.position.toString() + "Carte c");
     int j2 = getOwner(c);
+    print(j2.toString() + "asOwner");
 
     if (j2 != -999 && c.prix > 0) {
-      transaction(j.id, j2, c.prix);
+      transaction(j.reference, j2, c.prix);
       return (0);
     } else {
       if (c.prix < 0) {
-        prelevement(j.id, c.prix);
+        prelevement(j.reference, c.prix);
         return (7);
       }
       if (c.chance) {
@@ -172,7 +479,7 @@ class GameManager {
         return (4);
       }
       if (c.position == 20) {
-        wincagnotte(j.id);
+        wincagnotte(j.reference);
         return (5);
       }
     }
@@ -223,8 +530,10 @@ class GameManager {
 
   int getOwner(Carte carte) {
     for (Joueur j in lstJoueur) {
-      if (j.biens.contains(carte.position)) {
-        return j.id;
+      print(j.biens);
+      print(carte.position);
+      if (carte.acheteurId == j.reference) {
+        return j.reference;
       }
     }
     return -999;

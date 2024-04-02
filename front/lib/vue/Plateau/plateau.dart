@@ -32,8 +32,6 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
     for (int i in GameManager.cardManager.lobby.lstJoueurs) {
       lid.add(i);
     }
-    print(lid);
-    print(GameManager.cardManager.lobby.lstJoueurs);
     de = false;
     bottomid = int.parse(JsManager.jsmanager.prefs.getString("id") ??
         GameManager.cardManager.lobby.userId);
@@ -41,8 +39,6 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
     leftid = lid.removeAt(0);
     rightid = lid.removeAt(0);
     topid = lid.removeAt(0);
-    print(lid);
-    print(GameManager.cardManager.lobby.lstJoueurs);
     super.initState();
   }
 
@@ -481,50 +477,86 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   Widget getPlayerCard(int id) {
     int index = GameManager.cardManager.lstJoueur
         .indexWhere((element) => element.reference == id);
-    print("index = $index et id = $id");
-    Joueur j = GameManager.cardManager.lstJoueur.elementAt(index);
-    return Material(
-      color: Colors.transparent,
-      child: Column(
-        children: [
-          AutoSizeText(
-            "Joueur ${j.id}",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: 'Kabel-Bold',
-                fontWeight: FontWeight.w500,
-                fontSize: 16.0,
-                color: GameManager.cardManager.getColor(j.couleur)),
-            maxLines: 2,
-          ),
-          AutoSizeText(
-            "${j.argent} €",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-                fontFamily: 'Kabel-Bold',
-                fontWeight: FontWeight.w500,
-                fontSize: 16.0,
-                color: Colors.black),
-            maxLines: 2,
-          ),
-          IconButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return InfoJoueur(
-                        id: id,
-                      );
-                    }).then((value) {});
-              },
-              icon: const Icon(
-                Icons.info_outline,
-                color: Colors.black,
-                size: 25,
-              ))
-        ],
-      ),
-    );
+    if (index >= 0) {
+      Joueur j = GameManager.cardManager.lstJoueur.elementAt(index);
+      return Material(
+        color: Colors.transparent,
+        child: Column(
+          children: [
+            AutoSizeText(
+              "Joueur ${j.id}",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: 'Kabel-Bold',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.0,
+                  color: GameManager.cardManager.getColor(j.couleur)),
+              maxLines: 2,
+            ),
+            AutoSizeText(
+              "${j.argent} €",
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  fontFamily: 'Kabel-Bold',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.0,
+                  color: Colors.black),
+              maxLines: 2,
+            ),
+            IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return InfoJoueur(
+                          id: id,
+                        );
+                      }).then((value) {});
+                },
+                icon: const Icon(
+                  Icons.info_outline,
+                  color: Colors.black,
+                  size: 25,
+                ))
+          ],
+        ),
+      );
+    } else {
+      return Material(
+        color: Colors.transparent,
+        child: Column(
+          children: [
+            const AutoSizeText(
+              "Joueur ?",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: 'Kabel-Bold',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.0,
+                  color: Colors.black),
+              maxLines: 2,
+            ),
+            const AutoSizeText(
+              "?",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: 'Kabel-Bold',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.0,
+                  color: Colors.black),
+              maxLines: 2,
+            ),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.info_outline,
+                  color: Colors.black,
+                  size: 25,
+                ))
+          ],
+        ),
+      );
+    }
   }
 
   Widget getParcPrice() {
@@ -542,23 +574,24 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
     );
   }
 
-  void doAction(int action) {
+  void doAction(int action) async {
     switch (action) {
       case 1:
+        String res = await GameManager.cardManager.getChance();
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return RandomEvent(phrase: GameManager.cardManager.getChance());
+              return RandomEvent(phrase: res);
             }).then((value) {
           GameManager.cardManager.endTurn();
         });
         break;
       case 2:
+        String res = await GameManager.cardManager.getCommunaute();
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return RandomEvent(
-                  phrase: GameManager.cardManager.getCommunaute());
+              return RandomEvent(phrase: res);
             }).then((value) {
           GameManager.cardManager.endTurn();
         });
@@ -601,7 +634,7 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return RandomEvent(
+              return const RandomEvent(
                   phrase: "Hop Hop Hop tu te prend une amende de ");
             }).then((value) {
           GameManager.cardManager.endTurn();

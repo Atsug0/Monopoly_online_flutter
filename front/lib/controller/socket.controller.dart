@@ -105,7 +105,6 @@ class SocketManager {
   }
 
   void updateData(String room) {
-    print("ceci est la room :" + room);
     socket.emit('updateData', {room});
   }
 
