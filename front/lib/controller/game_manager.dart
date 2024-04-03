@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:js_interop';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:monopoly/controller/js_controller.dart';
@@ -23,7 +21,6 @@ class GameManager {
     await JsManager.jsmanager.getgame(lob);
 
     print(lobby.lstJoueurs);
-    
   }
 
   static const lst_chances = [
@@ -63,12 +60,6 @@ class GameManager {
     "Vous avez gagné le deuxième prix de beauté, recevez 10€",
     "Vous héritez de 100€"
   ];
-  void setCard(Carte carte) {}
-  void getCards() {}
-  void addHouse() {}
-  void addHotels() {}
-  void canHaveHouses() {}
-  void canHaveHotels() {}
 
   Future<String> getChance() async {
     final Random random = Random();
@@ -191,7 +182,9 @@ class GameManager {
             .argent += 150;
         break;
     }
-    SocketManager.socketmanager.onSocketUpdatePlateau!();
+    if (SocketManager.socketmanager.onSocketUpdatePlateau != null) {
+      SocketManager.socketmanager.onSocketUpdatePlateau!();
+    }
     return lst_chances[index];
   }
 
@@ -300,10 +293,6 @@ class GameManager {
     return false;
   }
 
-  bool asToPay() {
-    return true;
-  }
-
   int getIdTurn() {
     return lobby.tour;
   }
@@ -332,7 +321,9 @@ class GameManager {
         .updategame(int.parse(lobby.lobbyId), lobby.state, lobby.tour);
     SocketManager.socketmanager
         .updateData(SocketManager.socketmanager.idgame ?? "");
-    SocketManager.socketmanager.onSocketUpdatePlateau!();
+    if (SocketManager.socketmanager.onSocketUpdatePlateau != null) {
+      SocketManager.socketmanager.onSocketUpdatePlateau!();
+    }
     Timer(Duration(seconds: 2), () {
       if (lobby.tour < 0) {
         iatour();
@@ -367,7 +358,9 @@ class GameManager {
   void transaction(int id1, int id2, int prix) {
     lstJoueur.firstWhere((element) => element.reference == id1).argent -= prix;
     lstJoueur.firstWhere((element) => element.reference == id2).argent += prix;
-    SocketManager.socketmanager.onSocketUpdatePlateau!();
+    if (SocketManager.socketmanager.onSocketUpdatePlateau != null) {
+      SocketManager.socketmanager.onSocketUpdatePlateau!();
+    }
   }
 
   void prelevement(int id1, int prix) {
@@ -390,7 +383,9 @@ class GameManager {
     lstJoueur.elementAt(index).biens.add(idCard);
     lstCarte.firstWhere((element) => element.position == idCard).acheteurId =
         idJoueur;
-    SocketManager.socketmanager.onSocketUpdatePlateau!();
+    if (SocketManager.socketmanager.onSocketUpdatePlateau != null) {
+      SocketManager.socketmanager.onSocketUpdatePlateau!();
+    }
   }
 
   void deplacement(int idJoueur, int nbr) {
@@ -424,7 +419,9 @@ class GameManager {
             .position = copie;
       }
     }
-    SocketManager.socketmanager.onSocketUpdatePlateau!();
+    if (SocketManager.socketmanager.onSocketUpdatePlateau != null) {
+      SocketManager.socketmanager.onSocketUpdatePlateau!();
+    }
   }
 
   int action(int id) {
