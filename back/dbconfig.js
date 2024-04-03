@@ -250,6 +250,20 @@ BEGIN
     );
 END ;
 `);
+db.query(`-- Mettre à jour un user :
+CREATE PROCEDURE IF NOT EXISTS updateuser(
+    user_id INTEGER,
+    new_partieGagne INTEGER,
+    new_parties INTEGER,
+)
+BEGIN
+    UPDATE users
+    SET
+        partieGagne = new_partieGagne + partieGagne,
+        parties = new_parties + parties
+    WHERE id = user_id;
+END ;
+`);
 
 db.query(`-- Mettre à jour un joueur :
 CREATE PROCEDURE IF NOT EXISTS updatejoueur(
