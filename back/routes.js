@@ -71,6 +71,14 @@ router.post('/finpartie', (req, res) => {
   
 });
 
+router.put('/updateuser',auth, (req, res) => {
+  const sqlQuery = `CALL updateUser(?,?,?)`;
+  const {user_id, partieGagne, parties} = req.body;
+  db.query(sqlQuery,[user_id, username, email],(err,results)=>{
+      if (err) throw err;
+      res.status(200).send("User updated !");
+  });
+});
 router.get('/communaute', (req, res) => {
  
   const sqlQuery = `CALL getcommunaute()`;
