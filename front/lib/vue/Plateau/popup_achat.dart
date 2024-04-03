@@ -46,20 +46,18 @@ class PopUpAchat extends StatelessWidget {
                             color: const Color(0xFF1E2851),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Container(
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: AutoSizeText(
-                                  "Tu as assez d'argent pour acheter ${c.nom}",
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontFamily: 'Kabel-Bold',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18.0,
-                                      color: Colors.white),
-                                  maxLines: 2,
-                                ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: AutoSizeText(
+                                "Tu as assez d'argent pour acheter ${c.nom}",
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontFamily: 'Kabel-Bold',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.0,
+                                    color: Colors.white),
+                                maxLines: 2,
                               ),
                             ),
                           ),

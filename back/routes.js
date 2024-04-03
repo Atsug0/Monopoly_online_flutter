@@ -106,9 +106,6 @@ router.post('/registeruser', (req, res) => {
         return res.status(500).send("Erreur lors de la création de l'utilisateur");
       }
       res.status(200).send("Utilisateur créé !");
-      
-      
-      
     });
   });
 });

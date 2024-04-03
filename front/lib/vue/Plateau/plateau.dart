@@ -43,7 +43,6 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   }
 
   void _onSocketUpdate() {
-    print("update");
     setState(() {
       if (GameManager.cardManager.lobby.state == false) {
         //faire la sauvegarde des stats et quitter la partie
@@ -400,7 +399,7 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
             children: [
               Flexible(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 1.0),
                   child: GestureDetector(
                     onTap: () {
                       showDialog(
@@ -419,7 +418,7 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
                       style: TextStyle(
                         fontFamily: 'Kabel-Bold',
                         fontWeight: FontWeight.w500,
-                        fontSize: 6.0,
+                        fontSize: 2.0,
                         color: GameManager.cardManager.getColor(carte.couleur),
                       ),
                     ),

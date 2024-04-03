@@ -27,7 +27,6 @@ class _LobbyState extends State<Lobby> {
   }
 
   void _onSocketUpdate() {
-    print("update");
     setState(() {
       _nbrConnection = SocketManager.socketmanager.players.length + _nbrBot;
     }); // Mettre à jour l'état de la page lorsque les données du socket changent

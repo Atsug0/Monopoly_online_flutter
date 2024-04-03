@@ -21,6 +21,9 @@ class GameManager {
     await JsManager.jsmanager.getcartes();
     int lob = JsManager.jsmanager.prefs.getInt("lobby") ?? 0;
     await JsManager.jsmanager.getgame(lob);
+
+    print(lobby.lstJoueurs);
+    
   }
 
   static const lst_chances = [
@@ -310,9 +313,7 @@ class GameManager {
     for (Carte c in lstCarte) {
       await JsManager.jsmanager.updatecartes(c);
     }
-    print("La taille de la liste est " + lstJoueur.length.toString());
     for (Joueur j in lstJoueur) {
-      print(j.position);
       await JsManager.jsmanager.updatejoueur(j);
       if (j.argent > 0) {
         test = false;
@@ -334,53 +335,32 @@ class GameManager {
     SocketManager.socketmanager.onSocketUpdatePlateau!();
     Timer(Duration(seconds: 2), () {
       if (lobby.tour < 0) {
-        print("ici");
-        print(lobby.tour);
-        print(lobby.lstJoueurs);
-        for (Joueur j in lstJoueur) {
-          print("reference = " + j.reference.toString());
-        }
         iatour();
       }
     });
   }
 
   void iatour() async {
-    print("étape 1");
     Random random = Random();
     int dep = random.nextInt(6) + random.nextInt(6) + 2;
     int index =
         lstJoueur.indexWhere((element) => element.reference == lobby.tour);
     Joueur j = lstJoueur.elementAt(index);
-    print(j.position.toString() + "ceci est ca position avant dep");
     Carte c = lstCarte.firstWhere((element) => element.position == j.position);
     deplacement(lobby.tour, dep);
     j = lstJoueur.elementAt(index);
-    print(j.position.toString() + "ceci est ca position après dep");
     c = lstCarte.firstWhere((element) => element.position == j.position);
-
-    print("étape 2");
     int ac = action(lobby.tour);
-    print("étape 3");
     if (ac == 6) {
-      print("étape 4");
       if (achetable(lobby.tour)) {
-        print("étape 5");
-        print("étape 6.bis");
         achat(lobby.tour, c.position, c.prix);
-        print("étape 7.bis");
         j = lstJoueur.elementAt(index);
-        print(j.position.toString() + "ceci est ca position après dep");
         await endTurn();
-        print("étape 8.bis");
         return;
       }
     }
-    print("étape 6");
     j = lstJoueur.elementAt(index);
-    print(j.position.toString() + "ceci est ca position après dep");
     await endTurn();
-    print("étape 7");
     return;
   }
 
@@ -449,11 +429,8 @@ class GameManager {
 
   int action(int id) {
     Joueur j = lstJoueur.firstWhere((element) => element.reference == id);
-    print(j.reference.toString() + "Joeur j");
     Carte c = lstCarte.firstWhere((element) => element.position == j.position);
-    print(c.position.toString() + "Carte c");
     int j2 = getOwner(c);
-    print(j2.toString() + "asOwner");
 
     if (j2 != -999 && c.prix > 0) {
       transaction(j.reference, j2, c.prix);
@@ -530,8 +507,6 @@ class GameManager {
 
   int getOwner(Carte carte) {
     for (Joueur j in lstJoueur) {
-      print(j.biens);
-      print(carte.position);
       if (carte.acheteurId == j.reference) {
         return j.reference;
       }
