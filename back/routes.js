@@ -21,7 +21,7 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const Sequelize = require('sequelize'); // Installation requise
 
 // Configuration de la connexion à MariaDB
-const sequelize = new Sequelize('monop', 'roots', 'roots', {
+const sequelize = new Sequelize('monop', 'root', 'root', {
   host: 'localhost',
   dialect: 'mysql',
  
@@ -72,9 +72,9 @@ router.post('/finpartie', (req, res) => {
 });
 
 router.put('/updateuser',auth, (req, res) => {
-  const sqlQuery = `CALL updateUser(?,?,?)`;
+  const sqlQuery = `CALL updateuser(?,?,?)`;
   const {user_id, partieGagne, parties} = req.body;
-  db.query(sqlQuery,[user_id, username, email],(err,results)=>{
+  db.query(sqlQuery,[user_id, partieGagne, parties],(err,results)=>{
       if (err) throw err;
       res.status(200).send("User updated !");
   });

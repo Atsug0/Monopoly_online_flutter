@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'roots',
-    password: 'roots',
+    user: 'root',
+    password: 'root',
     
 });
 
@@ -254,13 +254,13 @@ db.query(`-- Mettre à jour un user :
 CREATE PROCEDURE IF NOT EXISTS updateuser(
     user_id INTEGER,
     new_partieGagne INTEGER,
-    new_parties INTEGER,
+    new_parties INTEGER
 )
 BEGIN
     UPDATE users
     SET
-        partieGagne = new_partieGagne + partieGagne,
-        parties = new_parties + parties
+        partieGagne = COALESCE((new_partieGagne + partieGagne), new_partieGagne),
+        parties = COALESCE((new_parties + parties), new_parties)
     WHERE id = user_id;
 END ;
 `);
