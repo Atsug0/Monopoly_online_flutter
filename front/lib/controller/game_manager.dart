@@ -298,14 +298,14 @@ class GameManager {
   }
 
   Future<void> endTurn() async {
-    bool test = true;
+    int test = 0;
     for (Carte c in lstCarte) {
       await JsManager.jsmanager.updatecartes(c);
     }
     for (Joueur j in lstJoueur) {
       await JsManager.jsmanager.updatejoueur(j);
       if (j.argent > 0) {
-        test = false;
+        test += 1;
       }
     }
     int index = lobby.lstJoueurs.indexWhere((element) => element == lobby.tour);
@@ -314,7 +314,7 @@ class GameManager {
     } else {
       lobby.tour = lobby.lstJoueurs[0];
     }
-    if (test) {
+    if (test <= 1) {
       lobby.state = false;
     }
     await JsManager.jsmanager
