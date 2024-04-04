@@ -17,7 +17,7 @@ db.connect((err) => {
     console.log('Connecté à la base de données MySQL');
   });
   
-db.query(`CREATE DATABASE IF NOT EXISTS mono;`);
+db.query(`CREATE DATABASE IF NOT EXISTS monop;`);
 db.query(`USE monop;`);
 db.query('DROP TABLE IF EXISTS cartes;');
 db.query('DROP TABLE IF EXISTS joueurs;');
