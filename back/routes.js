@@ -742,7 +742,7 @@ const lstCarte = [
 ];
 
 // Configuration de la connexion à MariaDB
-const sequelize = new Sequelize('monop', 'root', 'root', {
+const sequelize = new Sequelize('monop', 'roots', 'roots', {
   host: 'localhost',
   dialect: 'mysql',
  
@@ -889,9 +889,9 @@ CREATE TABLE IF NOT EXISTS joueurs (
 });
 
 router.put('/updateuser',auth, (req, res) => {
-  const sqlQuery = `CALL updateuser(?,?,?)`;
-  const {user_id, partieGagne, parties} = req.body;
-  db.query(sqlQuery,[user_id, partieGagne, parties],(err,results)=>{
+  const sqlQuery = `CALL updateuser(?,?,?,?)`;
+  const {user_id, partieGagne, parties, argentTotal} = req.body;
+  db.query(sqlQuery,[user_id, partieGagne, parties, argentTotal],(err,results)=>{
       if (err) throw err;
       res.status(200).send("User updated !");
   });
@@ -1051,8 +1051,10 @@ router.post('/creategame', auth,(req, res) => {
 // get username avec son id
 router.get('/getinfosuserwithid',auth, (req, res) => {
     const id_params = req.query.id;
-    db.query(`SELECT * FROM users WHERE user_id=${id_params}`, (err, results) => {
+    console.log(id_params);
+    db.query(`SELECT * FROM users WHERE id=${id_params}`, (err, results) => {
       if (err) {
+        console.log(err);
         return res.status(500).send("Internal Server Error ! ");
       }
       const user = results[0];

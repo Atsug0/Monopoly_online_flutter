@@ -2,8 +2,8 @@ const e = require('cors');
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: 'root',
+    user: 'roots',
+    password: 'roots',
     
 });
 
@@ -106,10 +106,10 @@ END;
 
 db.query(`-- Getinfosuserwithid :
 CREATE PROCEDURE IF NOT EXISTS getinfosuserwithid(
-    id INTEGER
+    id_test INTEGER
 )
 BEGIN
-    SELECT * FROM users WHERE id = id;
+    SELECT * FROM users WHERE id = id_test;
 END ;
 `);
 db.query(`-- Enregistrez un nouvel utilisateur :
@@ -129,11 +129,17 @@ BEGIN
         INSERT INTO users (
             username,
             email,
-            password
+            password,
+            partieGagne,
+            parties,
+            argentTotal
         ) VALUES (
             username_u,
             email_u,
-            password_u
+            password_u,
+            0,
+            0,
+            0
         );
     END IF;
 END ;
@@ -214,10 +220,10 @@ END ;
 `);
 db.query(`-- Get Partie avec id  :   
 CREATE PROCEDURE IF NOT EXISTS getgame(
-    id INTEGER
+    id_new INTEGER
 )
 BEGIN
-    SELECT * FROM parties WHERE id = id;
+    SELECT * FROM parties WHERE id = id_new;
 END ;
 `);
 
@@ -255,13 +261,15 @@ db.query(`-- Mettre à jour un user :
 CREATE PROCEDURE IF NOT EXISTS updateuser(
     user_id INTEGER,
     new_partieGagne INTEGER,
-    new_parties INTEGER
+    new_parties INTEGER,
+    new_argent INTEGER
 )
 BEGIN
     UPDATE users
     SET
         partieGagne = COALESCE((new_partieGagne + partieGagne), new_partieGagne),
-        parties = COALESCE((new_parties + parties), new_parties)
+        parties = COALESCE((new_parties + parties), new_parties),
+        argentTotal = COALESCE((new_argent + argentTotal), new_argent) 
     WHERE id = user_id;
 END ;
 `);

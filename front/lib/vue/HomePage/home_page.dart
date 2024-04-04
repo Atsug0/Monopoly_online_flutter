@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:monopoly/controller/js_controller.dart';
 import 'package:monopoly/controller/navigator_key.dart';
 import 'package:monopoly/controller/socket.controller.dart';
+import 'package:monopoly/vue/HomePage/info_user.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -104,34 +105,44 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GestureDetector(
-                onTap: () {
-                  print(JsManager.jsmanager.isConnected);
-                },
-                child: Container(
-                  height: 54,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: const Color(0xFF1E2851),
-                  ),
-                  child: const Center(
-                    child: AutoSizeText(
-                      "A propos",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: 'Kabel-Bold',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.0,
-                          color: Colors.white),
-                      maxLines: 2,
+            if (JsManager.jsmanager.isConnected)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GestureDetector(
+                  onTap: () async {
+                    List<String> res =
+                        await JsManager.jsmanager.getinfosuserwithid();
+                    if (res.isNotEmpty) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return InfoUser(lst: res);
+                        },
+                      ).then((value) {});
+                    }
+                  },
+                  child: Container(
+                    height: 54,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: const Color(0xFF1E2851),
+                    ),
+                    child: const Center(
+                      child: AutoSizeText(
+                        "A propos",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontFamily: 'Kabel-Bold',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                            color: Colors.white),
+                        maxLines: 2,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
             if (!JsManager.jsmanager.isConnected)
               Padding(
                 padding: const EdgeInsets.all(16.0),

@@ -45,21 +45,22 @@ class _MonopolyBoardState extends State<MonopolyBoard> {
   void _onSocketUpdate() {
     setState(() {
       if (GameManager.cardManager.lobby.state == false) {
-        //faire la sauvegarde des stats et quitter la partie
+        for (Joueur j in GameManager.cardManager.lstJoueur) {
+          if (j.reference >= 0) {
+            if (j.argent > 0) {
+              JsManager.jsmanager.updateuser(j.reference, 1, j.argent);
+            } else {
+              JsManager.jsmanager.updateuser(j.reference, 0, 0);
+            }
+          }
+        }
+        JsManager.jsmanager.findepartie();
         navigatorKey.currentState!.popUntil((route) => route.isFirst);
+        GameManager.cardManager.lstCarte.clear();
+        GameManager.cardManager.lstJoueur.clear();
       }
-    }); // Mettre à jour l'état de la page lorsque les données du socket changent
+    });
   }
-
-  //si c'est ton tour
-  // lancez les dés
-  // faire le déplacement
-  // si case libre pop up achat
-  // si case déjà acheté pop up paiement
-  // sinon pop up carte chance ou caisse de comunauté avec l action
-  // quand cela est fait
-  // voit si peu acheté maison ou hotel, un bouton apparait sinon il peut cliquer direct sur les cases.
-  // un bouton fin de tour apparait aussi
 
   @override
   Widget build(BuildContext context) {

@@ -224,30 +224,47 @@ class JsManager {
     }
   }
 
-  Future<bool> getinfosuserwithid(int id) async {
+  Future<List<String>> getinfosuserwithid() async {
     try {
       String token = prefs.getString('token') ?? "";
+      String id = prefs.getString('id') ?? "";
+
       final response = await http.get(
-          Uri.parse('http://localhost:8000/api/getinfosuserwithid?id=$id'),
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            'Content-Type': 'application/json',
-            'Accept': '*/*',
-            'Authorization': 'Bearer $token'
-          });
+        Uri.parse('http://localhost:8000/api/getinfosuserwithid?id=$id'),
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          'Authorization': 'Bearer $token'
+        },
+      );
 
       // Vérifier le code de réponse
       if (response.statusCode == 200) {
-        print('Réponse du serveur: ${response.body}');
-        return true;
+        dynamic jsonResponse = jsonDecode(response.body);
+
+        if (jsonResponse is List && jsonResponse.isNotEmpty) {
+          Map<String, dynamic> userData = jsonResponse[0];
+          List<String> lst = [
+            userData["username"].toString(),
+            userData["email"].toString(),
+            userData["partieGagne"].toString(),
+            userData["parties"].toString(),
+            userData["argentTotal"].toString(),
+          ];
+          return lst;
+        } else {
+          print('Réponse JSON invalide.');
+          return [];
+        }
       } else {
         print(
             'Échec de la requête avec le code de statut: ${response.statusCode}');
-        return false;
+        return [];
       }
     } catch (e) {
       print('Erreur lors de la requête: $e');
-      return false;
+      return [];
     }
   }
 
@@ -381,6 +398,68 @@ class JsManager {
       }
     } catch (e) {
       print('Erreur lors de la requête getJoueur: $e');
+      return false;
+    }
+  }
+
+  Future<bool> findepartie() async {
+    try {
+      String token = prefs.getString('token') ?? "";
+      final response = await http
+          .post(Uri.parse('http://localhost:8000/api/finpartie'), headers: {
+        "Access-Control-Allow-Origin": "*",
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        'Authorization': 'Bearer $token'
+      });
+
+      // Vérifier le code de réponse
+      if (response.statusCode == 200) {
+        print(response.body);
+        return true;
+      } else {
+        print(
+            'Échec de la requête avec le code de statut: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erreur lors de la requête getJoueur: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updateuser(int id, int win, int argent) async {
+    Map<String, dynamic> requestBody = {
+      'user_id': id,
+      'partieGagne': win,
+      'parties': 1,
+      'argentTotal': argent
+    };
+
+    // Faire la requête POST
+    try {
+      String token = prefs.getString('token') ?? "";
+      final response = await http.put(
+          Uri.parse('http://localhost:8000/api/updateuser'),
+          body: json.encode(requestBody),
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            'Content-Type': 'application/json',
+            'Accept': '*/*',
+            'Authorization': 'Bearer $token'
+          });
+
+      // Vérifier le code de réponse
+      if (response.statusCode == 200) {
+        print(response.body);
+        return true;
+      } else {
+        print(
+            'Échec de la requête avec le code de statut: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Erreur lors de la requête: $e');
       return false;
     }
   }

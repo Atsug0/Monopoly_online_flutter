@@ -160,7 +160,7 @@ class _LobbyState extends State<Lobby> {
                                   "-1");
                           if (id != -1 &&
                               id == SocketManager.socketmanager.players.first) {
-                            navigatorKey.currentState?.pushNamed("plateau");
+                            await JsManager.jsmanager.findepartie();
                             int sum = 0;
                             String idgame =
                                 SocketManager.socketmanager.idgame ?? "";
