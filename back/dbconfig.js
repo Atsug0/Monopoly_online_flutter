@@ -1,3 +1,4 @@
+const e = require('cors');
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: 'localhost',
@@ -6,7 +7,7 @@ const db = mysql.createConnection({
     
 });
 
-
+function executedbc() { 
 // Établir la connexion à la base de données
 db.connect((err) => {
     if (err) {
@@ -16,7 +17,7 @@ db.connect((err) => {
     console.log('Connecté à la base de données MySQL');
   });
   
-db.query(`CREATE DATABASE IF NOT EXISTS monop;`);
+db.query(`CREATE DATABASE IF NOT EXISTS mono;`);
 db.query(`USE monop;`);
 db.query('DROP TABLE IF EXISTS cartes;');
 db.query('DROP TABLE IF EXISTS joueurs;');
@@ -1117,5 +1118,6 @@ lstCarte.forEach(carte => {
         carte.prixMaison,
     ]);
 });
-
+}
+executedbc();
 module.exports = db;
