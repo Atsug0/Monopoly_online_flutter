@@ -6,14 +6,14 @@ Prérequis :
   - Installer MariaDB
 
 Etapes de lancement :
-  - Lancement du back avec la commande "npm start"
-  - Lancement du front avec la commande "flutter run"
+  - Lancement du back avec la commande "npm start" dans le dossier back
+  - Lancement du front avec la commande "flutter run" dans le dossier front
     
 Tests : 
   - Pour l'API :
-    - Lancement du swagger pour les tests avec la commande "npm run swagger"
+    - Lancement du swagger pour les tests avec la commande "npm run swagger" dans le dossier back
   - Pour les Tests Unitaires (TU) :
-    -Lancement des TU du front avec la commande "flutter test"
+    -Lancement des TU du front avec la commande "flutter test" dans le dossier front
     
 Architecture :
   - Deux répertoires : 
