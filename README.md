@@ -7,6 +7,7 @@ Prérequis :
 
 Etapes de lancement :
   - faire un "npm install" dans le dossier back pour installer tout les modules
+  - allez dans le fichier dbconfig.js (ligne 3-4) et routes.js (ligne 749) et mettre ces bons crédentials
   - Lancement du back avec la commande "npm start" dans le dossier back
   - Lancement du front avec la commande "flutter run" dans le dossier front
     
